@@ -133,17 +133,17 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
             <h1>🏆 FIFA World Cup 2026</h1>
             <p className="subtitle">AI-Powered Predictions & Live Odds</p>
           </div>
-          <button className="btn-portfolio" onClick={onNavigatePortfolio} title="View your portfolio">
+          <button className="btn-portfolio glass-btn" onClick={onNavigatePortfolio} title="View your portfolio">
             <span className="portfolio-icon">📊</span>
           </button>
         </div>
 
         <div className="wallet-info">
-          <div className="info-item">
+          <div className="info-item glass-info">
             <span className="info-label">Your Balance</span>
             <span className="info-value">{walletBalance.toFixed(2)} cUSD</span>
           </div>
-          <div className="info-item">
+          <div className="info-item glass-info">
             <span className="info-label">AI Accuracy</span>
             <span className="info-value accuracy">82.4%</span>
           </div>
@@ -157,7 +157,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
           placeholder="Search teams or matches..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
+          className="search-input glass-input"
         />
         <span className="search-icon">🔍</span>
       </div>
@@ -167,7 +167,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         {categories.map(cat => (
           <button
             key={cat.id}
-            className={`category-tab ${filter === cat.id ? 'active' : ''}`}
+            className={`category-tab glass-tab ${filter === cat.id ? 'active' : ''}`}
             onClick={() => setFilter(cat.id)}
           >
             <span className="cat-icon">{cat.icon}</span>
@@ -177,7 +177,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
       </div>
 
       {/* AI Stats Bar */}
-      <div className="ai-stats-bar">
+      <div className="ai-stats-bar glass-stats">
         <div className="stat-box">
           <span className="stat-number">847</span>
           <span className="stat-name">Predictions</span>
@@ -198,10 +198,11 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
 
       {/* Markets Grid */}
       <div className="markets-container">
-        {filteredMarkets.map(market => (
+        {filteredMarkets.map((market, idx) => (
           <div
             key={market.id}
-            className="market-card wc-card"
+            className="market-card wc-card glass-market"
+            style={{ animationDelay: `${idx * 0.07}s` }}
             onClick={() => onSelectMarket(market)}
           >
             <div className="card-header">

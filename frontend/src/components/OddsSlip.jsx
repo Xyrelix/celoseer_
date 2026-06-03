@@ -1,36 +1,24 @@
 import { useState } from 'react';
+import Icon from './Icon';
 
 export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack }) {
   const [prediction, setPrediction] = useState(null);
-  const [amount, setAmount] = useState('');
-  const [slippage, setSlippage] = useState(2);
-  const [loading, setLoading] = useState(false);
+  const [amount,     setAmount]     = useState('');
+  const [slippage,   setSlippage]   = useState(2);
+  const [loading,    setLoading]    = useState(false);
 
-  const betAmount = parseFloat(amount) || 0;
-  const selectedOdds = prediction === 'yes' ? market.yesOdds : market.noOdds;
-  const potentialPayout = betAmount > 0 ? (betAmount * selectedOdds).toFixed(2) : 0;
-  const potentialProfit = betAmount > 0 ? (potentialPayout - betAmount).toFixed(2) : 0;
-  const adjustedOdds = selectedOdds * (1 - slippage / 100);
-
-  const isValid = prediction && betAmount > 0 && betAmount <= walletBalance;
-
-  const quickAmounts = [10, 25, 50, 100];
+  const betAmount      = parseFloat(amount) || 0;
+  const selectedOdds   = prediction === 'yes' ? market.yesOdds : market.noOdds;
+  const potentialPayout  = betAmount > 0 ? (betAmount * selectedOdds).toFixed(2) : 0;
+  const potentialProfit  = betAmount > 0 ? (potentialPayout - betAmount).toFixed(2) : 0;
+  const adjustedOdds   = selectedOdds * (1 - slippage / 100);
+  const isValid        = prediction && betAmount > 0 && betAmount <= walletBalance;
 
   const handleSubmit = async () => {
     if (!isValid) return;
-
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1200));
-
-    onSubmit({
-      marketId: market.id,
-      marketTitle: market.title,
-      prediction,
-      amount: betAmount,
-      odds: adjustedOdds,
-      potentialPayout,
-      potentialProfit
-    });
+    await new Promise(r => setTimeout(r, 1200));
+    onSubmit({ marketId: market.id, marketTitle: market.title, prediction, amount: betAmount, odds: adjustedOdds, potentialPayout, potentialProfit });
     setLoading(false);
   };
 
@@ -38,70 +26,71 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
     <div className="odds-slip">
       {/* Header */}
       <div className="slip-header">
-        <button className="btn-back" onClick={onBack}>← Back</button>
+        <button className="btn-back slip-back" onClick={onBack} aria-label="Back">
+          <Icon name="back" size={20} color="#ffd700" />
+        </button>
         <h2>Place Wager</h2>
-        <div className="header-spacer"></div>
+        <div className="header-spacer" />
       </div>
 
-      {/* Market Preview */}
-      <div className="market-preview">
+      {/* Market preview */}
+      <div className="market-preview glass-market">
+        <img
+          src={market.image}
+          alt={market.team || 'market'}
+          className="market-preview-flag"
+          onError={e => { e.target.style.display = 'none'; }}
+        />
         <h3>{market.title}</h3>
-        <div className="market-image-large">{market.image}</div>
+        <div className="preview-badges">
+          <span className="confidence-badge">{market.confidence}% Confidence</span>
+          <span className="prediction-tag">{market.prediction}</span>
+        </div>
       </div>
 
-      {/* Prediction Selection */}
+      {/* Prediction selector */}
       <div className="prediction-selector">
         <p className="selector-label">What do you predict?</p>
-
         <button
           className={`prediction-btn yes ${prediction === 'yes' ? 'selected' : ''}`}
           onClick={() => setPrediction('yes')}
         >
-          <span className="prediction-icon">✓</span>
+          <Icon name="check" size={20} className="prediction-icon" />
           <span className="prediction-text">YES</span>
           <span className="prediction-odds">{market.yesOdds.toFixed(2)}x</span>
         </button>
-
         <button
           className={`prediction-btn no ${prediction === 'no' ? 'selected' : ''}`}
           onClick={() => setPrediction('no')}
         >
-          <span className="prediction-icon">✗</span>
+          <Icon name="close" size={20} className="prediction-icon" />
           <span className="prediction-text">NO</span>
           <span className="prediction-odds">{market.noOdds.toFixed(2)}x</span>
         </button>
       </div>
 
-      {/* Amount Input */}
+      {/* Amount input */}
       {prediction && (
         <div className="amount-section">
           <div className="amount-input-group">
             <label>Wager Amount</label>
             <div className="input-wrapper">
-              <span className="currency">💰</span>
+              <Icon name="coin" size={18} color="#ffd700" className="currency-icon" />
               <input
                 type="number"
                 placeholder="0.00"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                min="0"
-                step="0.01"
-                max={walletBalance}
-                className="amount-input"
+                onChange={e => setAmount(e.target.value)}
+                min="0" step="0.01" max={walletBalance}
+                className="amount-input glass-input"
               />
               <span className="currency-code">cUSD</span>
             </div>
             <span className="balance-hint">Balance: {walletBalance.toFixed(2)} cUSD</span>
           </div>
-
-          {/* Quick Amounts */}
           <div className="quick-amounts">
-            {quickAmounts.map(qa => (
-              <button
-                key={qa}
-                className="quick-btn"
-                onClick={() => setAmount(Math.min(qa, walletBalance).toString())}
-              >
+            {[10, 25, 50, 100].map(qa => (
+              <button key={qa} className="quick-btn glass-tab" onClick={() => setAmount(Math.min(qa, walletBalance).toString())}>
                 {qa}
               </button>
             ))}
@@ -109,26 +98,22 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
         </div>
       )}
 
-      {/* Real-time Calculation Card */}
+      {/* Calc card */}
       {prediction && betAmount > 0 && (
-        <div className="calculation-card">
+        <div className="calculation-card glass-market">
           <div className="calc-item">
             <span className="calc-label">Wager</span>
             <span className="calc-value">{betAmount.toFixed(2)} cUSD</span>
           </div>
-
           <div className="calc-item">
             <span className="calc-label">Odds (with {slippage}% slippage)</span>
             <span className="calc-value highlight">{adjustedOdds.toFixed(2)}x</span>
           </div>
-
-          <div className="divider"></div>
-
+          <div className="divider" />
           <div className="calc-item">
             <span className="calc-label">Potential Payout</span>
             <span className="calc-value winner">{potentialPayout} cUSD</span>
           </div>
-
           <div className="calc-item">
             <span className="calc-label">Potential Profit</span>
             <span className="calc-value profit-amount">{potentialProfit} cUSD</span>
@@ -136,33 +121,27 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
         </div>
       )}
 
-      {/* Slippage Control */}
+      {/* Slippage */}
       {prediction && betAmount > 0 && (
-        <div className="slippage-control">
+        <div className="slippage-control glass-market">
           <div className="slippage-header">
             <span className="slippage-label">Max Slippage</span>
             <span className="slippage-value">{slippage}%</span>
           </div>
           <input
-            type="range"
-            min="0"
-            max="10"
-            step="0.5"
+            type="range" min="0" max="10" step="0.5"
             value={slippage}
-            onChange={(e) => setSlippage(parseFloat(e.target.value))}
+            onChange={e => setSlippage(parseFloat(e.target.value))}
             className="slippage-slider"
           />
-          <div className="slippage-marks">
-            <span>0%</span>
-            <span>10%</span>
-          </div>
+          <div className="slippage-marks"><span>0%</span><span>10%</span></div>
         </div>
       )}
 
-      {/* Action Buttons */}
+      {/* Submit */}
       <div className="slip-actions">
         <button
-          className="btn-primary btn-lg btn-submit"
+          className="btn-primary btn-lg btn-submit ob-btn-glow"
           onClick={handleSubmit}
           disabled={!isValid || loading}
         >
@@ -172,7 +151,8 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
 
       {/* Disclaimer */}
       <div className="disclaimer">
-        <p>⚠️ This is a high-risk prediction market. Only wager amounts you can afford to lose.</p>
+        <Icon name="warning" size={16} color="#f87171" />
+        <p>High-risk prediction market. Only wager amounts you can afford to lose.</p>
       </div>
     </div>
   );
