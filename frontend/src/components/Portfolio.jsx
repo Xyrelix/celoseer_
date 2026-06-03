@@ -36,7 +36,7 @@ export default function Portfolio({ user, positions, walletBalance, onBack }) {
       {/* Header */}
       <div className="portfolio-header">
         <button className="btn-back" onClick={onBack}>← Back</button>
-        <h1>My Portfolio</h1>
+        <h1 color="#ffd700">My Portfolio</h1>
         <div className="header-spacer"></div>
       </div>
 
