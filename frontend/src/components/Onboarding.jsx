@@ -29,10 +29,10 @@ export default function Onboarding({ onComplete }) {
     <div className="onboarding">
       <div className="onboarding-hero">
         <div className="logo-circle">
-          <img src="/CeloSeer_logo.jpeg" alt="CeloSeer logo" className="logo-image" />
+          <img src="/logo.png" alt="CeloSeer logo" className="logo-image" />
         </div>
         <div className="logo-wordmark">
-          <img src="/CeloSeer.png" alt="CeloSeer" />
+          <img src="CeloSeer.png" alt="CeloSeer" />
         </div>
       </div>
 
