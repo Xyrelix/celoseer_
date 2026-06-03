@@ -3,65 +3,53 @@ import Onboarding from './components/Onboarding';
 import MarketDiscoverFeed from './components/MarketDiscoverFeed';
 import OddsSlip from './components/OddsSlip';
 import Portfolio from './components/Portfolio';
+import { useAuth } from './hooks/useAuth';
+import { useWalletBalance } from './hooks/useWalletBalance';
 import './styles.css';
 
 function App() {
-  const [currentView, setCurrentView] = useState('onboarding');
-  const [user, setUser] = useState(null);
+  const { authenticated, user, walletAddress, displayAddress, logout } = useAuth();
+  const { balance, refetch: refetchBalance } = useWalletBalance(walletAddress);
+
+  const [currentView, setCurrentView] = useState('discover');
   const [selectedMarket, setSelectedMarket] = useState(null);
-  const [walletBalance, setWalletBalance] = useState(0);
-  const [portfolio, setPortfolio] = useState([]);
 
-  const handleOnboardingComplete = (userData) => {
-    setUser(userData);
-    setWalletBalance(userData.initialBalance || 100);
-    setCurrentView('discover');
-  };
+  const appUser = authenticated
+    ? { privyUser: user, walletAddress, displayAddress }
+    : null;
 
-  const handleMarketSelect = (market) => {
-    setSelectedMarket(market);
-    setCurrentView('odds');
-  };
-
-  const handleOddsSubmit = (betData) => {
-    const newPosition = {
-      id: Date.now(),
-      ...betData,
-      timestamp: new Date().toLocaleString(),
-      status: 'active'
-    };
-    setPortfolio([...portfolio, newPosition]);
-    setWalletBalance(walletBalance - betData.amount);
-    setCurrentView('discover');
-  };
+  if (!authenticated) {
+    return (
+      <div className="app-container">
+        <Onboarding onComplete={() => setCurrentView('discover')} />
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
-      {currentView === 'onboarding' && !user && (
-        <Onboarding onComplete={handleOnboardingComplete} />
-      )}
-      {currentView === 'discover' && user && (
-        <MarketDiscoverFeed 
-          onSelectMarket={handleMarketSelect}
-          user={user}
-          walletBalance={walletBalance}
+      {currentView === 'discover' && (
+        <MarketDiscoverFeed
+          onSelectMarket={(market) => { setSelectedMarket(market); setCurrentView('odds'); }}
+          user={appUser}
+          walletBalance={parseFloat(balance)}
           onNavigatePortfolio={() => setCurrentView('portfolio')}
+          onLogout={logout}
         />
       )}
-      {currentView === 'odds' && user && selectedMarket && (
-        <OddsSlip 
+      {currentView === 'odds' && selectedMarket && (
+        <OddsSlip
           market={selectedMarket}
-          user={user}
-          walletBalance={walletBalance}
-          onSubmit={handleOddsSubmit}
+          user={appUser}
+          walletBalance={parseFloat(balance)}
+          onSubmit={() => { refetchBalance(); setCurrentView('discover'); }}
           onBack={() => setCurrentView('discover')}
         />
       )}
-      {currentView === 'portfolio' && user && (
-        <Portfolio 
-          user={user}
-          positions={portfolio}
-          walletBalance={walletBalance}
+      {currentView === 'portfolio' && (
+        <Portfolio
+          user={appUser}
+          walletBalance={parseFloat(balance)}
           onBack={() => setCurrentView('discover')}
         />
       )}

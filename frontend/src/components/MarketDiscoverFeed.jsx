@@ -1,156 +1,55 @@
 import { useState } from 'react';
+import { useMarkets } from '../hooks/useMarkets';
 
-const mockMarkets = [
-  {
-    id: 1,
-    title: 'Argentina to Win World Cup 2026?',
-    category: 'knockout',
-    team: 'Argentina',
-    yesOdds: 3.5,
-    noOdds: 1.35,
-    sentiment: 68,
-    volume: 125430,
-    image: 'https://flagcdn.com/ar.svg',
-    confidence: 82,
-    prediction: 'FAVORITES'
-  },
-  {
-    id: 2,
-    title: 'France to Win World Cup 2026?',
-    category: 'knockout',
-    team: 'France',
-    yesOdds: 4.2,
-    noOdds: 1.25,
-    sentiment: 72,
-    volume: 98760,
-    image: 'https://flagcdn.com/fr.svg',
-    confidence: 78,
-    prediction: 'STRONG'
-  },
-  {
-    id: 3,
-    title: 'England to Win World Cup 2026?',
-    category: 'knockout',
-    team: 'England',
-    yesOdds: 4.8,
-    noOdds: 1.20,
-    sentiment: 65,
-    volume: 87340,
-    image: 'https://flagcdn.com/gb.svg',
-    confidence: 75,
-    prediction: 'CONTENDER'
-  },
-  {
-    id: 4,
-    title: 'Brazil to Win World Cup 2026?',
-    category: 'knockout',
-    team: 'Brazil',
-    yesOdds: 3.8,
-    noOdds: 1.30,
-    sentiment: 71,
-    volume: 156200,
-    image: 'https://flagcdn.com/br.svg',
-    confidence: 80,
-    prediction: 'FAVORITES'
-  },
-  {
-    id: 5,
-    title: 'USA to Reach World Cup Semi-Finals?',
-    category: 'stage',
-    team: 'USA',
-    yesOdds: 2.1,
-    noOdds: 1.85,
-    sentiment: 58,
-    volume: 64320,
-    image: 'https://flagcdn.com/us.svg',
-    confidence: 72,
-    prediction: 'LIKELY'
-  },
-  {
-    id: 6,
-    title: 'Spain to Reach World Cup Final?',
-    category: 'stage',
-    team: 'Spain',
-    yesOdds: 2.45,
-    noOdds: 1.65,
-    sentiment: 69,
-    volume: 112560,
-    image: 'https://flagcdn.com/es.svg',
-    confidence: 76,
-    prediction: 'PROBABLE'
-  },
-  {
-    id: 7,
-    title: 'Germany to Win World Cup 2026?',
-    category: 'knockout',
-    team: 'Germany',
-    yesOdds: 5.5,
-    noOdds: 1.18,
-    sentiment: 62,
-    volume: 73890,
-    image: 'https://flagcdn.com/de.svg',
-    confidence: 71,
-    prediction: 'CONTENDER'
-  },
-  {
-    id: 8,
-    title: 'Final Match Over 2.5 Goals?',
-    category: 'prop',
-    yesOdds: 1.65,
-    noOdds: 2.1,
-    sentiment: 74,
-    volume: 203450,
-    image: 'https://cdn-icons-png.flaticon.com/512/2436/2436481.png',
-    confidence: 79,
-    prediction: 'LIKELY'
-  }
-];
-
-
-export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance, onNavigatePortfolio }) {
+export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance, onNavigatePortfolio, onLogout }) {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const { markets, loading, error, refetch } = useMarkets();
 
-  const filteredMarkets = mockMarkets.filter(market => {
+  const filteredMarkets = markets.filter(market => {
     const matchesFilter = filter === 'all' || market.category === filter;
     const matchesSearch = market.title.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
   const categories = [
-    { id: 'all', label: 'All Markets', icon: '🏆' },
+    { id: 'all',     label: 'All Markets',       icon: '🏆' },
     { id: 'knockout', label: 'Tournament Winners', icon: '👑' },
-    { id: 'stage', label: 'Stage Advances', icon: '📈' },
-    { id: 'prop', label: 'Props & Parlays', icon: '⚽' }
+    { id: 'stage',   label: 'Stage Advances',     icon: '📈' },
+    { id: 'match',   label: 'Match Results',      icon: '⚽' },
+    { id: 'prop',    label: 'Props',              icon: '🎲' },
   ];
 
   return (
     <div className="discover-feed world-cup-theme">
-      {/* Header */}
       <div className="feed-header">
         <div className="header-top">
           <div className="header-title">
             <h1>🏆 FIFA World Cup 2026</h1>
             <p className="subtitle">AI-Powered Predictions & Live Odds</p>
           </div>
-          <button className="btn-portfolio" onClick={onNavigatePortfolio} title="View your portfolio">
-            <span className="portfolio-icon">📊</span>
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn-portfolio" onClick={onNavigatePortfolio} title="My Portfolio">
+              <span className="portfolio-icon">📊</span>
+            </button>
+            <button className="btn-portfolio" onClick={onLogout} title="Sign out" style={{ fontSize: '1rem' }}>
+              ⏏
+            </button>
+          </div>
         </div>
 
         <div className="wallet-info">
           <div className="info-item">
-            <span className="info-label">Your Balance</span>
+            <span className="info-label">Balance</span>
             <span className="info-value">{walletBalance.toFixed(2)} cUSD</span>
           </div>
           <div className="info-item">
-            <span className="info-label">AI Accuracy</span>
-            <span className="info-value accuracy">82.4%</span>
+            <span className="info-label">Wallet</span>
+            <span className="info-value" style={{ fontSize: '0.85rem' }}>{user?.displayAddress ?? '—'}</span>
           </div>
         </div>
       </div>
 
-      {/* Search */}
       <div className="search-bar">
         <input
           type="text"
@@ -162,7 +61,6 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         <span className="search-icon">🔍</span>
       </div>
 
-      {/* Category Filter */}
       <div className="category-tabs">
         {categories.map(cat => (
           <button
@@ -176,96 +74,130 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         ))}
       </div>
 
-      {/* AI Stats Bar */}
       <div className="ai-stats-bar">
         <div className="stat-box">
-          <span className="stat-number">847</span>
-          <span className="stat-name">Predictions</span>
+          <span className="stat-number">{markets.length}</span>
+          <span className="stat-name">Markets</span>
         </div>
         <div className="stat-box">
           <span className="stat-number">82.4%</span>
-          <span className="stat-name">Accuracy</span>
+          <span className="stat-name">AI Accuracy</span>
         </div>
         <div className="stat-box">
           <span className="stat-number">32</span>
           <span className="stat-name">Teams</span>
         </div>
         <div className="stat-box">
-          <span className="stat-number">12</span>
-          <span className="stat-name">Stadiums</span>
+          <span className="stat-number">64</span>
+          <span className="stat-name">Matches</span>
         </div>
       </div>
 
-      {/* Markets Grid */}
-      <div className="markets-container">
-        {filteredMarkets.map(market => (
-          <div
-            key={market.id}
-            className="market-card wc-card"
-            onClick={() => onSelectMarket(market)}
-          >
-            <div className="card-header">
-              <div className="market-image-wc">
-                {market.image.includes('http') || market.image.includes('cdn') ? (
-                  <img src={market.image} alt={market.team || 'market'} className="flag-icon" />
-                ) : (
-                  market.image
-                )}
-              </div>
-              <div className="market-meta">
-                <span className="category-badge">{market.category}</span>
-                <span className="confidence-badge">{market.confidence}%</span>
-              </div>
+      {loading && (
+        <div className="markets-container">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="market-card wc-card" style={{ opacity: 0.4, minHeight: 180 }}>
+              <div style={{ background: '#374151', borderRadius: 8, height: 20, marginBottom: 12 }} />
+              <div style={{ background: '#374151', borderRadius: 8, height: 14, width: '60%' }} />
             </div>
-
-            <h3 className="market-title">{market.title}</h3>
-
-            <div className="sentiment-section">
-              <div className="sentiment-bar">
-                <div className="sentiment-fill yes" style={{ width: `${market.sentiment}%` }}></div>
-              </div>
-              <div className="sentiment-labels">
-                <span className="label-yes">{market.sentiment}% YES</span>
-                <span className="label-no">{100 - market.sentiment}% NO</span>
-              </div>
-            </div>
-
-            <div className="odds-row">
-              <div className="odds-item yes">
-                <span className="odds-label">YES</span>
-                <span className="odds-value">{market.yesOdds.toFixed(2)}</span>
-              </div>
-              <div className="divider-vertical"></div>
-              <div className="odds-item no">
-                <span className="odds-label">NO</span>
-                <span className="odds-value">{market.noOdds.toFixed(2)}</span>
-              </div>
-            </div>
-
-            <div className="card-bottom">
-              <div className="card-stats">
-                <div className="volume-badge">
-                  <span>{(market.volume / 1000).toFixed(0)}k</span>
-                </div>
-              </div>
-              <span className="prediction-tag">{market.prediction}</span>
-            </div>
-
-            <div className="card-cta">
-              <span className="cta-text">Place Prediction →</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredMarkets.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-icon">🔎</div>
-          <p>No markets found</p>
+          ))}
         </div>
       )}
 
-      {/* Footer Stats */}
+      {error && (
+        <div style={{ textAlign: 'center', padding: 40, color: '#f87171' }}>
+          <p>Failed to load markets: {error}</p>
+          <button className="btn-secondary" style={{ marginTop: 16, width: 'auto', padding: '10px 24px' }} onClick={refetch}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="markets-container">
+          {filteredMarkets.map(market => (
+            <div
+              key={market.id}
+              className="market-card wc-card"
+              onClick={() => onSelectMarket(market)}
+            >
+              <div className="card-header">
+                <div className="market-image-wc">
+                  {market.image ? (
+                    <img src={market.image} alt={market.team || 'market'} className="flag-icon"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  ) : '⚽'}
+                </div>
+                <div className="market-meta">
+                  <span className="category-badge">{market.category}</span>
+                  <span className="confidence-badge">{market.confidence}%</span>
+                </div>
+              </div>
+
+              <h3 className="market-title">{market.title}</h3>
+
+              {market.analysis && (
+                <p style={{ fontSize: '0.78rem', color: '#9ca3af', marginBottom: 10, lineHeight: 1.4 }}>
+                  {market.analysis}
+                </p>
+              )}
+
+              <div className="sentiment-section">
+                <div className="sentiment-bar">
+                  <div className="sentiment-fill yes" style={{ width: `${market.sentiment}%` }} />
+                </div>
+                <div className="sentiment-labels">
+                  <span className="label-yes">{market.sentiment}% YES</span>
+                  <span className="label-no">{100 - market.sentiment}% NO</span>
+                </div>
+              </div>
+
+              <div className="odds-row">
+                <div className="odds-item yes">
+                  <span className="odds-label">YES</span>
+                  <span className="odds-value">{market.yesOdds?.toFixed(2)}</span>
+                </div>
+                <div className="divider-vertical" />
+                {market.drawOdds && (
+                  <>
+                    <div className="odds-item" style={{ borderLeft: '3px solid #6b7280' }}>
+                      <span className="odds-label">DRAW</span>
+                      <span className="odds-value">{market.drawOdds.toFixed(2)}</span>
+                    </div>
+                    <div className="divider-vertical" />
+                  </>
+                )}
+                <div className="odds-item no">
+                  <span className="odds-label">NO</span>
+                  <span className="odds-value">{market.noOdds?.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="card-bottom">
+                <div className="card-stats">
+                  <div className="volume-badge">
+                    <span>{((market.volume ?? 0) / 1000).toFixed(0)}k vol</span>
+                  </div>
+                </div>
+                <span className="prediction-tag">{market.prediction}</span>
+              </div>
+
+              <div className="card-cta">
+                <span className="cta-text">Place Prediction →</span>
+              </div>
+            </div>
+          ))}
+
+          {filteredMarkets.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-icon">🔎</div>
+              <p>No markets found</p>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="footer-stats">
         <div className="footer-stat-item">
           <span className="footer-stat-icon">🌍</span>
