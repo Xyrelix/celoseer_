@@ -7,18 +7,26 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
   const [slippage,   setSlippage]   = useState(2);
   const [loading,    setLoading]    = useState(false);
 
-  const betAmount      = parseFloat(amount) || 0;
-  const selectedOdds   = prediction === 'yes' ? market.yesOdds : market.noOdds;
-  const potentialPayout  = betAmount > 0 ? (betAmount * selectedOdds).toFixed(2) : 0;
-  const potentialProfit  = betAmount > 0 ? (potentialPayout - betAmount).toFixed(2) : 0;
-  const adjustedOdds   = selectedOdds * (1 - slippage / 100);
-  const isValid        = prediction && betAmount > 0 && betAmount <= walletBalance;
+  const betAmount     = parseFloat(amount) || 0;
+  const selectedOdds  = prediction === 'yes' ? market.yesOdds : market.noOdds;
+  const potentialPayout = betAmount > 0 ? (betAmount * selectedOdds).toFixed(2) : 0;
+  const potentialProfit = betAmount > 0 ? (potentialPayout - betAmount).toFixed(2) : 0;
+  const adjustedOdds  = selectedOdds * (1 - slippage / 100);
+  const isValid       = prediction && betAmount > 0 && betAmount <= walletBalance;
 
   const handleSubmit = async () => {
     if (!isValid) return;
     setLoading(true);
     await new Promise(r => setTimeout(r, 1200));
-    onSubmit({ marketId: market.id, marketTitle: market.title, prediction, amount: betAmount, odds: adjustedOdds, potentialPayout, potentialProfit });
+    onSubmit({
+      marketId: market.id,
+      marketTitle: market.title,
+      prediction,
+      amount: betAmount,
+      odds: adjustedOdds,
+      potentialPayout,
+      potentialProfit,
+    });
     setLoading(false);
   };
 
@@ -90,7 +98,11 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
           </div>
           <div className="quick-amounts">
             {[10, 25, 50, 100].map(qa => (
-              <button key={qa} className="quick-btn glass-tab" onClick={() => setAmount(Math.min(qa, walletBalance).toString())}>
+              <button
+                key={qa}
+                className="quick-btn glass-tab"
+                onClick={() => setAmount(Math.min(qa, walletBalance).toString())}
+              >
                 {qa}
               </button>
             ))}
@@ -98,7 +110,7 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
         </div>
       )}
 
-      {/* Calc card */}
+      {/* Calculation card */}
       {prediction && betAmount > 0 && (
         <div className="calculation-card glass-market">
           <div className="calc-item">
@@ -116,7 +128,7 @@ export default function OddsSlip({ market, user, walletBalance, onSubmit, onBack
           </div>
           <div className="calc-item">
             <span className="calc-label">Potential Profit</span>
-            <span className="calc-value profit-amount">{potentialProfit} cUSD</span>
+            <span className="calc-value profit-amount">+{potentialProfit} cUSD</span>
           </div>
         </div>
       )}

@@ -54,16 +54,13 @@ function App() {
 
   return (
     <>
-      {/* Motion background — shown for every state except onboarding (which has its own) */}
       {appState !== 'onboarding' && <BackgroundFX />}
 
       <div className="app-container app-transparent">
-        {/* ── Onboarding ── */}
         {appState === 'onboarding' && (
           <Onboarding onComplete={handleOnboardingComplete} />
         )}
 
-        {/* ── Main tabbed app ── */}
         {appState === 'main' && user && (
           <div className="main-app">
             <header className="top-bar glass-dark-bar">
@@ -91,11 +88,10 @@ function App() {
               </div>
             </main>
 
-            <BottomNav activeTab={activeTab} onTabChange={(t) => { setActiveTab(t); }} />
+            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
         )}
 
-        {/* ── Odds Slip ── */}
         {appState === 'odds' && user && selectedMarket && (
           <div className="page-slide-in">
             <OddsSlip
@@ -108,7 +104,6 @@ function App() {
           </div>
         )}
 
-        {/* ── My Profile ── */}
         {appState === 'profile' && user && (
           <div className="page-slide-in">
             <Profile

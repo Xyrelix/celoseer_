@@ -614,7 +614,7 @@ button:active::after {
   width: 100%;
   padding: 12px 16px 12px 40px;
   background: #1f2937;
-  border: 2px solid #92400e;
+  border: 2px solid #ffd700;
   border-radius: 10px;
   color: #e5e7eb;
   font-size: 1rem;
@@ -650,21 +650,21 @@ button:active::after {
 
 .category-tab {
   background: #1f2937;
-  border: 2px solid #92400e;
+  border: 2px solid #000000;
   color: #9ca3af;
   padding: 10px 14px;
   border-radius: 10px;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   transition: all 0.3s ease;
   font-size: 0.9rem;
   font-weight: 500;
 }
 
 .category-tab:hover {
-  border-color: #4b5563;
+  border-color: #ffd700;
 }
 
 .category-tab.active {
@@ -687,14 +687,14 @@ button:active::after {
 
 .market-card {
   background: #1f2937;
-  border: 1px solid #92400e;
+  border: 1px solid #ffd700;
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
-  animation: slideInUp 0.5s ease-out;
+  animation: backwards 0.5s ease-out;
 }
 
 .market-card:hover {
@@ -768,7 +768,7 @@ button:active::after {
 }
 
 .sentiment-fill.yes {
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, #31c939, #41b655, #4b9c7f);
 }
 
 .sentiment-labels {
@@ -779,11 +779,11 @@ button:active::after {
 }
 
 .label-yes {
-  color: #34d399;
+  color: #31c939;
 }
 
 .label-no {
-  color: #f87171;
+  color: #ce3c3c;
 }
 
 /* Odds Row */
@@ -803,11 +803,11 @@ button:active::after {
 }
 
 .odds-item.yes {
-  border-left: 3px solid #10b981;
+  border: 1.5px solid #31c939;
 }
 
 .odds-item.no {
-  border-left: 3px solid #ef4444;
+  border: 1.5px solid #ce3c3c;
 }
 
 .odds-label {
@@ -822,12 +822,12 @@ button:active::after {
 .odds-value {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #f3f4f6;
+  color: #ffffff;
 }
 
 .divider-vertical {
   width: 1px;
-  background: #92400e;
+  background: #ffffff;
 }
 
 /* Volume Footer */
@@ -853,7 +853,7 @@ button:active::after {
 /* Card CTA */
 .card-cta {
   text-align: center;
-  color: #fbbf24;
+  color: #ffd700;
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -917,7 +917,7 @@ button:active::after {
 }
 
 .market-image-large {
-  font-size: 4rem;
+  font-size: 1.5rem;
   margin: 16px 0;
 }
 
@@ -1636,7 +1636,8 @@ button:active::after {
 .header-title h1 {
   font-size: 2rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #fbbf24 100%);
+  /*background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #fbbf24 100%);*/
+  background: linear-gradient(135deg, #ffd700 10%, #ffffff 75%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1646,7 +1647,7 @@ button:active::after {
 
 .subtitle {
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: #ffffff;
   font-weight: 500;
   margin: 0;
 }
@@ -1662,8 +1663,9 @@ button:active::after {
 }
 
 .info-item {
-  background: linear-gradient(135deg, #92400e 0%, #1f2937 100%);
-  border: 1px solid #4b5563;
+  /*background: linear-gradient(135deg, #92400e 0%, #1f2937 100%);*/
+  background: #1f2937;
+  border: 1px solid #ffd700;
   border-radius: 10px;
   padding: 10px 12px;
   text-align: center;
@@ -1687,7 +1689,7 @@ button:active::after {
 }
 
 .info-value.accuracy {
-  color: #34d399;
+  color: #31c939;
   font-size: 1.2rem;
 }
 
@@ -1703,7 +1705,7 @@ button:active::after {
     rgba(59, 130, 246, 0.1) 0%,
     rgba(139, 92, 246, 0.1) 100%
   );
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid #000000;
   border-radius: 12px;
   backdrop-filter: blur(10px);
 }
@@ -1713,14 +1715,14 @@ button:active::after {
   padding: 12px 8px;
   border-radius: 8px;
   background: rgba(31, 41, 55, 0.5);
-  border: 1px solid rgba(75, 85, 99, 0.3);
+  border: 1px solid #ffd700;
 }
 
 .stat-number {
   display: block;
   font-size: 1.4rem;
   font-weight: 800;
-  color: #fbbf24;
+  color: #ffd700;
   line-height: 1;
   margin-bottom: 4px;
   animation: countUp 0.6s ease-out;
@@ -1742,16 +1744,16 @@ button:active::after {
 /* World Cup Market Card */
 .wc-card {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #92400e;
+  border: 1px solid #000000;
 }
 
 .wc-card:hover {
-  border-color: #f97316;
+  border-color: #ffd700;
   box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
 }
 
 .wc-card::before {
-  background: linear-gradient(90deg, #ef4444, #f97316, #fbbf24);
+  /*background: linear-gradient(90deg, #ef4444, #f97316, #fbbf24);*/
 }
 
 .market-image-wc {
@@ -1772,8 +1774,9 @@ button:active::after {
 
 /* Confidence Badge */
 .confidence-badge {
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  color: white;
+  /*background: linear-gradient(135deg, #10b981 0%, #34d399 100%);*/
+  background: #ffd700;
+  color: #000000;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -1788,7 +1791,7 @@ button:active::after {
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-top: 1px solid #92400e;
+  border-top: 1px solid #ffd700;
   margin-top: 12px;
 }
 
@@ -1799,7 +1802,7 @@ button:active::after {
 
 .volume-badge {
   background: rgba(59, 130, 246, 0.2);
-  color: #fbbf24;
+  color: #ffd700;
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -1807,8 +1810,9 @@ button:active::after {
 }
 
 .prediction-tag {
-  background: linear-gradient(135deg, #f97316, #ef4444);
-  color: white;
+  /*background: linear-gradient(135deg, #f97316, #ef4444);*/
+  background: #000000;
+  color: #ffd700;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.7rem;
@@ -1824,23 +1828,24 @@ button:active::after {
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #92400e;
+  border-top: 1px solid #ffd700;
 }
 
 .footer-stat-item {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #92400e;
+  /*background: linear-gradient(135deg, #1f2937 0%, #111827 100%);*/
+  background: #ffd700;
+  border: 1px solid #000000;
   border-radius: 12px;
   padding: 16px;
   text-align: center;
   transition: all 0.3s ease;
 }
 
-.footer-stat-item:hover {
-  border-color: #f97316;
+/*.footer-stat-item:hover {
+  border-color: #ffd700;
   box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
   transform: translateY(-2px);
-}
+}*/
 
 .footer-stat-icon {
   display: block;
@@ -1851,7 +1856,7 @@ button:active::after {
 .footer-stat-text {
   display: block;
   font-size: 0.9rem;
-  color: #d1d5db;
+  color: #000000;
   font-weight: 600;
 }
 

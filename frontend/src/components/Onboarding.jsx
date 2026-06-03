@@ -74,11 +74,11 @@ const LANGUAGES = {
 const LANG_KEYS = ['en', 'es', 'fr', 'pt', 'de', 'ar'];
 
 export default function Onboarding({ onComplete }) {
-  const [step, setStep] = useState('start');
-  const [loading, setLoading] = useState(false);
-  const [imgIndex, setImgIndex] = useState(0);
+  const [step,         setStep]         = useState('start');
+  const [loading,      setLoading]      = useState(false);
+  const [imgIndex,     setImgIndex]     = useState(0);
   const [prevImgIndex, setPrevImgIndex] = useState(null);
-  const [lang, setLang] = useState('en');
+  const [lang,         setLang]         = useState('en');
   const [showLangPicker, setShowLangPicker] = useState(false);
 
   const t = LANGUAGES[lang];
@@ -107,7 +107,7 @@ export default function Onboarding({ onComplete }) {
       username: `seer_${Math.random().toString(36).substring(2, 8)}`,
       walletAddress: '0x' + Math.random().toString(16).slice(2, 42),
       initialBalance: 100,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     });
     setLoading(false);
   };
