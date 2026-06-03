@@ -8,6 +8,8 @@
   box-sizing: border-box;
 }
 
+html,
+#root,
 body {
   font-family:
     "Tektur",
@@ -31,7 +33,7 @@ body {
 
 .app-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  background: #0f0f0f;
   max-width: 428px;
   margin: 0 auto;
   padding-bottom: 20px;
@@ -52,7 +54,7 @@ button {
 }
 
 button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -69,7 +71,6 @@ button::after {
 button:active::after {
   animation: ripple 0.6s ease-out;
 }
-
 
 .btn-primary {
   background: #111111;
@@ -718,7 +719,6 @@ button:active::after {
   opacity: 1;
 }
 
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -1324,22 +1324,14 @@ button:active::after {
 
 .stat-value {
   display: block;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #fbbf24;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f3f4f6;
   margin-top: 6px;
 }
 
 .stat-value.animate {
   animation: countUp 0.6s ease-out;
-}
-  margin-bottom: 6px;
-}
-
-.stat-value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #f3f4f6;
 }
 
 /* Accuracy Chart */
@@ -1387,13 +1379,24 @@ button:active::after {
   filter: brightness(1.2);
 }
 
-.chart-bar-wrapper:nth-child(1) .chart-bar { animation-delay: 0.1s; }
-.chart-bar-wrapper:nth-child(2) .chart-bar { animation-delay: 0.2s; }
-.chart-bar-wrapper:nth-child(3) .chart-bar { animation-delay: 0.3s; }
-.chart-bar-wrapper:nth-child(4) .chart-bar { animation-delay: 0.4s; }
-.chart-bar-wrapper:nth-child(5) .chart-bar { animation-delay: 0.5s; }
-.chart-bar-wrapper:nth-child(6) .chart-bar { animation-delay: 0.6s; }
-
+.chart-bar-wrapper:nth-child(1) .chart-bar {
+  animation-delay: 0.1s;
+}
+.chart-bar-wrapper:nth-child(2) .chart-bar {
+  animation-delay: 0.2s;
+}
+.chart-bar-wrapper:nth-child(3) .chart-bar {
+  animation-delay: 0.3s;
+}
+.chart-bar-wrapper:nth-child(4) .chart-bar {
+  animation-delay: 0.4s;
+}
+.chart-bar-wrapper:nth-child(5) .chart-bar {
+  animation-delay: 0.5s;
+}
+.chart-bar-wrapper:nth-child(6) .chart-bar {
+  animation-delay: 0.6s;
+}
 
 .chart-label {
   font-size: 0.75rem;
@@ -1727,7 +1730,6 @@ button:active::after {
   animation: countUp 0.6s ease-out;
 }
 
-
 .stat-name {
   display: block;
   font-size: 0.7rem;
@@ -1767,7 +1769,6 @@ button:active::after {
   object-fit: cover;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
-
 
 /* Confidence Badge */
 .confidence-badge {
