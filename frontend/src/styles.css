@@ -2376,6 +2376,438 @@ button:active::after {
 }
 
 /* ============================================
+   ONBOARDING V2 — CORNER LOGO + TYPEWRITER + FEATURES
+   ============================================ */
+
+/* Corner wordmark — top-left */
+.ob-corner-logo {
+  position: fixed;
+  top: 18px;
+  left: 16px;
+  z-index: 30;
+  animation: fadeIn 0.6s ease-out both;
+}
+
+.ob-corner-img {
+  height: 22px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+  opacity: 0.9;
+}
+
+/* Slim hero — small ring + typewriter */
+.ob-hero-slim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.6s ease-out 0.1s both;
+}
+
+.ob-logo-ring-sm {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,215,0,0.4);
+  box-shadow: 0 0 20px rgba(255,215,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: bounce 2.5s ease-in-out infinite, glowPulse 3s ease-in-out infinite;
+}
+
+/* Typewriter text */
+.ob-typewriter-wrap {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+}
+
+.ob-typewriter {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+  text-align: center;
+  line-height: 1.45;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.ob-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #ffd700;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  animation: cursorBlink 0.85s step-start infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── Step indicator (replaces old .steps-indicator) ── */
+.ob-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.ob-step-pip {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.ob-step-pip--active {
+  background: #ffd700;
+  border-color: #ffd700;
+  color: #111;
+  box-shadow: 0 0 16px rgba(255,215,0,0.45);
+}
+
+.ob-step-pip--done {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+
+.ob-step-line {
+  width: 40px;
+  height: 2px;
+  background: rgba(255,255,255,0.12);
+  transition: background 0.4s ease;
+}
+
+.ob-step-line--done { background: #10b981; }
+
+/* ── Step 2 — Clean confirm UI ── */
+.ob-confirm-clean {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: fadeUp 0.38s ease-out both;
+}
+
+.ob-wallet-ring {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255,215,0,0.08);
+  border: 1.5px solid rgba(255,215,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ob-wallet-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,215,0,0.25);
+  animation: walletPulseRing 2s ease-out infinite;
+}
+
+@keyframes walletPulseRing {
+  0%   { transform: scale(0.92); opacity: 0.8; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+
+.ob-confirm-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #f3f4f6;
+  margin: 0;
+  text-align: center;
+}
+
+.ob-confirm-desc {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+/* Setup checklist rows */
+.ob-setup-list {
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+.ob-setup-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  animation: fadeUp 0.4s ease-out both;
+}
+
+.ob-setup-row:last-child { border-bottom: none; }
+
+.ob-setup-icon-wrap {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(16,185,129,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ob-setup-label {
+  flex: 1;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.ob-setup-val {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.ob-setup-val--mono {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  color: #d1d5db;
+}
+
+/* Loading row inside button */
+.ob-loading-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ob-spin {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,215,0,0.3);
+  border-top-color: #ffd700;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Subtle back link */
+.ob-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+  margin-top: -8px;
+}
+
+.ob-back-link:hover { color: #9ca3af; }
+.ob-back-link:disabled { opacity: 0.4; pointer-events: none; }
+
+/* ── Features 2×2 grid (replaces old benefit chips) ── */
+.ob-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  animation: fadeUp 0.6s ease-out 0.35s both;
+}
+
+.ob-feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 12px;
+  background: rgba(10, 10, 20, 0.62);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+  animation: fadeUp 0.5s ease-out both;
+  transition: all 0.25s ease;
+}
+
+.ob-feature-card:hover {
+  border-color: rgba(255,255,255,0.14);
+  transform: translateY(-2px);
+}
+
+.ob-feat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ob-feat-title {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin-bottom: 2px;
+}
+
+.ob-feat-desc {
+  display: block;
+  font-size: 0.66rem;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+/* App transparent override */
+.app-transparent {
+  background: transparent !important;
+}
+
+/* Page slide-in transition */
+.page-slide-in { animation: fadeUp 0.38s ease-out both; }
+
+/* Tab page animation */
+.tab-page-anim { animation: tabFadeIn 0.3s ease-out both; }
+
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   BACKGROUND MOTION GRAPHICS
+   ============================================ */
+
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #050508;
+}
+
+.bg-mesh {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(ellipse at 18% 28%, rgba(255,215,0,0.07) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 72%, rgba(239,68,68,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.04) 0%, transparent 58%),
+    radial-gradient(ellipse at 8% 82%,  rgba(16,185,129,0.04) 0%, transparent 50%);
+  animation: meshMorph 22s ease-in-out infinite alternate;
+}
+
+@keyframes meshMorph {
+  0%   { transform: scale(1)    rotate(0deg); }
+  40%  { transform: scale(1.06) rotate(2deg); }
+  100% { transform: scale(1.02) rotate(-1deg); }
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.bg-orb--gold   { width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,215,0,0.13) 0%, transparent 65%); top: -200px; left: -100px; animation: orb1 20s ease-in-out infinite alternate; }
+.bg-orb--red    { width: 360px; height: 360px; background: radial-gradient(circle, rgba(239,68,68,0.09) 0%, transparent 65%);  top: 15%; right: -120px;  animation: orb2 25s ease-in-out infinite alternate; }
+.bg-orb--blue   { width: 420px; height: 420px; background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 65%); bottom: 5%; left: -60px;   animation: orb3 17s ease-in-out infinite alternate; }
+.bg-orb--green  { width: 280px; height: 280px; background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 65%); bottom: 28%; right: 5%;    animation: orb4 13s ease-in-out infinite alternate; }
+.bg-orb--violet { width: 320px; height: 320px; background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 65%); top: 42%; left: 28%;       animation: orb5 28s ease-in-out infinite alternate; }
+
+@keyframes orb1 { 0% { transform: translate(0,0); }    100% { transform: translate(65px,80px); } }
+@keyframes orb2 { 0% { transform: translate(0,0); }    100% { transform: translate(-55px,60px); } }
+@keyframes orb3 { 0% { transform: translate(0,0); }    100% { transform: translate(70px,-45px); } }
+@keyframes orb4 { 0% { transform: translate(0,0); }    100% { transform: translate(-45px,-60px); } }
+@keyframes orb5 { 0% { transform: translate(0,0); }    100% { transform: translate(35px,55px); } }
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,215,0,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,215,0,0.018) 1px, transparent 1px);
+  background-size: 52px 52px;
+  animation: gridScroll 55s linear infinite;
+}
+
+@keyframes gridScroll { 0% { background-position: 0 0; } 100% { background-position: 52px 52px; } }
+
+.bg-stars { position: absolute; inset: 0; }
+
+.bg-star {
+  position: absolute;
+  border-radius: 50%;
+  animation: starTwinkle ease-in-out infinite;
+}
+
+.bg-star--gold  { background: rgba(255,215,0,0.7); box-shadow: 0 0 3px rgba(255,215,0,0.4); }
+.bg-star--white { background: rgba(255,255,255,0.6); }
+
+@keyframes starTwinkle {
+  0%,100% { transform: scale(0.6); opacity: 0.12; }
+  50%      { transform: scale(1.4); opacity: 1; }
+}
+
+.bg-beam {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(255,215,0,0.04) 40%, rgba(255,215,0,0.06) 60%, transparent 100%);
+  animation: beamFade ease-in-out infinite alternate;
+}
+
+@keyframes beamFade { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none;
+}
+
+/* ============================================
    MAIN APP SHELL — TOP BAR + BOTTOM NAV
    ============================================ */
 

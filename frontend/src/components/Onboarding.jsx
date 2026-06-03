@@ -1,101 +1,86 @@
 import { useState, useEffect } from 'react';
+import Icon from './Icon';
 
 const WC_IMAGES = ['/wc1.jpg', '/wc2.jpg', '/wc3.jpg', '/wc4.jpg'];
 
-const LANGUAGES = {
-  en: {
-    flag: '🇬🇧', name: 'EN',
-    tagline: 'AI-Powered World Cup Predictions',
-    copy: 'Begin your CeloSeer journey with a gasless smart wallet.',
-    continue: 'Continue', preparing: 'Preparing...',
-    getStarted: 'Get Started', settingUp: 'Setting up...',
-    back: 'Back', creatingWallet: 'Creating Your Smart Wallet',
-    walletDesc: "We're silently setting up your account abstraction wallet for gasless transactions.",
-    walletGenerated: '✓ Wallet Generated',
-    benefits: ['Gasless Tx', 'Secure', 'Mobile'], benefitIcons: ['⚡', '🔒', '📱'],
-  },
-  es: {
-    flag: '🇪🇸', name: 'ES',
-    tagline: 'Predicciones de Copa Mundial con IA',
-    copy: 'Comienza tu viaje en CeloSeer con una billetera inteligente sin gas.',
-    continue: 'Continuar', preparing: 'Preparando...',
-    getStarted: 'Comenzar', settingUp: 'Configurando...',
-    back: 'Atrás', creatingWallet: 'Creando Tu Billetera',
-    walletDesc: 'Configuramos tu billetera para transacciones sin gas.',
-    walletGenerated: '✓ Billetera Generada',
-    benefits: ['Sin Gas', 'Seguro', 'Móvil'], benefitIcons: ['⚡', '🔒', '📱'],
-  },
-  fr: {
-    flag: '🇫🇷', name: 'FR',
-    tagline: 'Pronostics Coupe du Monde par IA',
-    copy: 'Commencez votre parcours CeloSeer avec un portefeuille intelligent.',
-    continue: 'Continuer', preparing: 'Préparation...',
-    getStarted: 'Commencer', settingUp: 'Configuration...',
-    back: 'Retour', creatingWallet: 'Création du Portefeuille',
-    walletDesc: 'Nous configurons votre portefeuille pour des transactions sans gaz.',
-    walletGenerated: '✓ Portefeuille Créé',
-    benefits: ['Sans Gaz', 'Sécurisé', 'Mobile'], benefitIcons: ['⚡', '🔒', '📱'],
-  },
-  pt: {
-    flag: '🇧🇷', name: 'PT',
-    tagline: 'Previsões da Copa do Mundo com IA',
-    copy: 'Comece sua jornada CeloSeer com uma carteira sem gás.',
-    continue: 'Continuar', preparing: 'Preparando...',
-    getStarted: 'Começar', settingUp: 'Configurando...',
-    back: 'Voltar', creatingWallet: 'Criando Sua Carteira',
-    walletDesc: 'Configuramos sua carteira para transações sem gás.',
-    walletGenerated: '✓ Carteira Gerada',
-    benefits: ['Sem Gas', 'Seguro', 'Mobile'], benefitIcons: ['⚡', '🔒', '📱'],
-  },
-  de: {
-    flag: '🇩🇪', name: 'DE',
-    tagline: 'KI-gestützte WM-Vorhersagen',
-    copy: 'Beginne deine CeloSeer-Reise mit einem gaslosen Smart Wallet.',
-    continue: 'Weiter', preparing: 'Vorbereitung...',
-    getStarted: 'Loslegen', settingUp: 'Einrichten...',
-    back: 'Zurück', creatingWallet: 'Wallet Wird Erstellt',
-    walletDesc: 'Wir richten dein Wallet für gaslose Transaktionen ein.',
-    walletGenerated: '✓ Wallet Erstellt',
-    benefits: ['Gaslos', 'Sicher', 'Mobil'], benefitIcons: ['⚡', '🔒', '📱'],
-  },
-  ar: {
-    flag: '🇸🇦', name: 'AR',
-    tagline: 'توقعات كأس العالم بالذكاء الاصطناعي',
-    copy: 'ابدأ رحلتك مع CeloSeer بمحفظة ذكية بدون رسوم غاز.',
-    continue: 'متابعة', preparing: '...جاري التحضير',
-    getStarted: 'ابدأ الآن', settingUp: '...جاري الإعداد',
-    back: 'رجوع', creatingWallet: 'إنشاء محفظتك الذكية',
-    walletDesc: 'نقوم بإعداد محفظتك للمعاملات بدون رسوم.',
-    walletGenerated: '✓ تم إنشاء المحفظة',
-    benefits: ['بدون رسوم', 'آمن', 'موبايل'], benefitIcons: ['⚡', '🔒', '📱'],
-  },
-};
+/* ── Typewriter texts ── */
+const TW_TEXTS = [
+  'Predict FIFA World Cup 2026 outcomes with AI.',
+  '82.4% accuracy across 847 prediction calls.',
+  'Earn cUSD rewards on every correct call.',
+  'Gasless smart wallet — zero fees on Celo.',
+  "Join the world's first AI sports prediction market.",
+];
 
+/* ── Platform features (replaces old benefit chips) ── */
+const FEATURES = [
+  { icon: 'insights', color: '#ffd700', title: 'AI Predictions', desc: '82.4% accuracy on 847+ historical calls' },
+  { icon: 'coin',     color: '#10b981', title: 'Earn cUSD',      desc: 'Real rewards for every correct prediction' },
+  { icon: 'shield',   color: '#6366f1', title: 'Gasless Wallet', desc: 'Zero transaction fees on Celo blockchain' },
+  { icon: 'globe',    color: '#f97316', title: 'WC 2026 Live',   desc: '48 Teams · 104 Matches · 3 Nations' },
+];
+
+/* ── Language map ── */
+const LANGUAGES = {
+  en: { flag: '🇬🇧', name: 'EN', copy: 'Begin your CeloSeer journey with a gasless smart wallet.', continue: 'Get Started', preparing: 'Preparing...', getStarted: 'Enter CeloSeer', settingUp: 'Setting up...', back: 'Back', creatingWallet: 'Your Wallet Is Ready', walletDesc: 'Account abstraction wallet created — gasless transactions enabled.', walletGenerated: 'Wallet generated', network: 'Celo Mainnet', gas: 'Gas sponsored (free)' },
+  es: { flag: '🇪🇸', name: 'ES', copy: 'Comienza tu viaje en CeloSeer con una billetera sin gas.', continue: 'Comenzar', preparing: 'Preparando...', getStarted: 'Entrar a CeloSeer', settingUp: 'Configurando...', back: 'Atrás', creatingWallet: 'Tu Billetera Está Lista', walletDesc: 'Billetera creada — transacciones sin gas habilitadas.', walletGenerated: 'Billetera generada', network: 'Celo Mainnet', gas: 'Gas patrocinado (gratis)' },
+  fr: { flag: '🇫🇷', name: 'FR', copy: 'Commencez votre parcours CeloSeer avec un portefeuille sans gaz.', continue: 'Commencer', preparing: 'Préparation...', getStarted: 'Entrer dans CeloSeer', settingUp: 'Configuration...', back: 'Retour', creatingWallet: 'Votre Portefeuille Est Prêt', walletDesc: 'Portefeuille créé — transactions sans gaz activées.', walletGenerated: 'Portefeuille généré', network: 'Celo Mainnet', gas: 'Gaz sponsorisé (gratuit)' },
+  pt: { flag: '🇧🇷', name: 'PT', copy: 'Comece sua jornada CeloSeer com uma carteira sem gás.', continue: 'Começar', preparing: 'Preparando...', getStarted: 'Entrar no CeloSeer', settingUp: 'Configurando...', back: 'Voltar', creatingWallet: 'Sua Carteira Está Pronta', walletDesc: 'Carteira criada — transações sem gás habilitadas.', walletGenerated: 'Carteira gerada', network: 'Celo Mainnet', gas: 'Gas patrocinado (grátis)' },
+  de: { flag: '🇩🇪', name: 'DE', copy: 'Beginne deine CeloSeer-Reise mit einem gaslosen Wallet.', continue: 'Loslegen', preparing: 'Vorbereitung...', getStarted: 'CeloSeer betreten', settingUp: 'Einrichten...', back: 'Zurück', creatingWallet: 'Dein Wallet Ist Bereit', walletDesc: 'Wallet erstellt — gaslose Transaktionen aktiviert.', walletGenerated: 'Wallet erstellt', network: 'Celo Mainnet', gas: 'Gas gesponsert (kostenlos)' },
+  ar: { flag: '🇸🇦', name: 'AR', copy: 'ابدأ رحلتك مع CeloSeer بمحفظة ذكية بدون رسوم.', continue: 'ابدأ', preparing: '...جاري التحضير', getStarted: 'ادخل إلى CeloSeer', settingUp: '...جاري الإعداد', back: 'رجوع', creatingWallet: 'محفظتك جاهزة', walletDesc: 'تم إنشاء المحفظة — المعاملات بدون رسوم مفعّلة.', walletGenerated: 'تم إنشاء المحفظة', network: 'Celo Mainnet', gas: 'الغاز مدعوم (مجاني)' },
+};
 const LANG_KEYS = ['en', 'es', 'fr', 'pt', 'de', 'ar'];
 
+/* ────────────────────────────────────────── */
+
 export default function Onboarding({ onComplete }) {
-  const [step,         setStep]         = useState('start');
-  const [loading,      setLoading]      = useState(false);
-  const [imgIndex,     setImgIndex]     = useState(0);
-  const [prevImgIndex, setPrevImgIndex] = useState(null);
-  const [lang,         setLang]         = useState('en');
+  const [step,           setStep]           = useState('start');
+  const [loading,        setLoading]        = useState(false);
+  const [imgIndex,       setImgIndex]       = useState(0);
+  const [prevImgIndex,   setPrevImgIndex]   = useState(null);
+  const [lang,           setLang]           = useState('en');
   const [showLangPicker, setShowLangPicker] = useState(false);
+
+  /* Typewriter state */
+  const [twDisplay, setTwDisplay] = useState('');
+  const [twIdx,     setTwIdx]     = useState(0);
+  const [twPos,     setTwPos]     = useState(0);
+  const [twPhase,   setTwPhase]   = useState('typing'); // 'typing' | 'waiting' | 'deleting'
 
   const t = LANGUAGES[lang];
 
+  /* ── Image carousel ── */
   useEffect(() => {
-    const timer = setInterval(() => {
-      setImgIndex(i => {
-        setPrevImgIndex(i);
-        return (i + 1) % WC_IMAGES.length;
-      });
+    const id = setInterval(() => {
+      setImgIndex(i => { setPrevImgIndex(i); return (i + 1) % WC_IMAGES.length; });
     }, 4500);
-    return () => clearInterval(timer);
+    return () => clearInterval(id);
   }, []);
+
+  /* ── Typewriter engine ── */
+  useEffect(() => {
+    const text = TW_TEXTS[twIdx];
+    let id;
+    if (twPhase === 'typing') {
+      if (twPos < text.length) {
+        id = setTimeout(() => { setTwDisplay(text.slice(0, twPos + 1)); setTwPos(p => p + 1); }, 52);
+      } else {
+        id = setTimeout(() => setTwPhase('deleting'), 2400);
+      }
+    } else if (twPhase === 'deleting') {
+      if (twPos > 0) {
+        id = setTimeout(() => { setTwDisplay(text.slice(0, twPos - 1)); setTwPos(p => p - 1); }, 22);
+      } else {
+        setTwIdx(i => (i + 1) % TW_TEXTS.length);
+        setTwPhase('typing');
+      }
+    }
+    return () => clearTimeout(id);
+  }, [twPos, twPhase, twIdx]);
 
   const handleStart = async () => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 900));
     setLoading(false);
     setStep('confirm');
   };
@@ -112,18 +97,15 @@ export default function Onboarding({ onComplete }) {
     setLoading(false);
   };
 
-  const goToSlide = (i) => {
-    setPrevImgIndex(imgIndex);
-    setImgIndex(i);
-  };
+  const goToSlide = (i) => { setPrevImgIndex(imgIndex); setImgIndex(i); };
 
   return (
     <div className="ob-root" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      {/* ── Carousel Background ── */}
+
+      {/* ── Carousel background ── */}
       <div className="ob-carousel">
         {WC_IMAGES.map((src, i) => (
-          <div
-            key={i}
+          <div key={i}
             className={`ob-slide ${i === imgIndex ? 'ob-slide--active' : ''} ${i === prevImgIndex ? 'ob-slide--prev' : ''}`}
             style={{ backgroundImage: `url(${src})` }}
           />
@@ -131,23 +113,22 @@ export default function Onboarding({ onComplete }) {
         <div className="ob-overlay" />
       </div>
 
-      {/* ── Language Picker ── */}
+      {/* ── Wordmark — top-left corner ── */}
+      <div className="ob-corner-logo">
+        <img src="/realceloseer.png" alt="CeloSeer" className="ob-corner-img" />
+      </div>
+
+      {/* ── Language picker — top-right ── */}
       <div className="ob-lang">
-        <button
-          className="ob-lang-btn"
-          onClick={() => setShowLangPicker(p => !p)}
-          aria-label="Select language"
-        >
+        <button className="ob-lang-btn" onClick={() => setShowLangPicker(p => !p)} aria-label="Select language">
           <span className="ob-lang-flag">{t.flag}</span>
           <span className="ob-lang-code">{t.name}</span>
           <span className="ob-chevron">{showLangPicker ? '▴' : '▾'}</span>
         </button>
-
         {showLangPicker && (
           <div className="ob-lang-menu">
             {LANG_KEYS.map(key => (
-              <button
-                key={key}
+              <button key={key}
                 className={`ob-lang-opt ${lang === key ? 'ob-lang-opt--active' : ''}`}
                 onClick={() => { setLang(key); setShowLangPicker(false); }}
               >
@@ -159,87 +140,106 @@ export default function Onboarding({ onComplete }) {
         )}
       </div>
 
-      {/* ── Slide Dots ── */}
+      {/* ── Slide dots ── */}
       <div className="ob-dots">
         {WC_IMAGES.map((_, i) => (
-          <button
-            key={i}
-            className={`ob-dot ${i === imgIndex ? 'ob-dot--active' : ''}`}
-            onClick={() => goToSlide(i)}
-            aria-label={`Slide ${i + 1}`}
-          />
+          <button key={i} className={`ob-dot ${i === imgIndex ? 'ob-dot--active' : ''}`} onClick={() => goToSlide(i)} />
         ))}
       </div>
 
-      {/* ── Main Content ── */}
+      {/* ── Main scrollable content ── */}
       <div className="ob-content">
-        {/* Hero */}
-        <div className="ob-hero">
-          <div className="ob-logo-ring">
+
+        {/* Hero — small logo + typewriter */}
+        <div className="ob-hero-slim">
+          <div className="ob-logo-ring-sm">
             <img src="/reallogo.png" alt="CeloSeer" className="logo-image" />
           </div>
-          <div className="ob-wordmark">
-            <img src="/realceloseer.png" alt="CeloSeer" />
+          <div className="ob-typewriter-wrap">
+            <p className="ob-typewriter">
+              {twDisplay}<span className="ob-cursor" />
+            </p>
           </div>
-          <p className="ob-tagline">{t.tagline}</p>
         </div>
 
-        {/* Card */}
+        {/* ── Login card ── */}
         <div className="ob-card">
-          <div className="steps-indicator">
-            <div className={`step ${step === 'start' ? 'active' : 'done'}`}>1</div>
-            <div className="connector" />
-            <div className={`step ${step === 'confirm' ? 'active' : ''}`}>2</div>
+          {/* Step indicator */}
+          <div className="ob-steps">
+            <div className={`ob-step-pip ${step === 'start' ? 'ob-step-pip--active' : 'ob-step-pip--done'}`}>
+              {step !== 'start' ? <Icon name="check" size={13} color="#111" /> : '1'}
+            </div>
+            <div className={`ob-step-line ${step === 'confirm' ? 'ob-step-line--done' : ''}`} />
+            <div className={`ob-step-pip ${step === 'confirm' ? 'ob-step-pip--active' : ''}`}>2</div>
           </div>
 
+          {/* ── Step 1 ── */}
           {step === 'start' && (
             <div className="start-section ob-animate-in" key="start">
               <p className="start-copy">{t.copy}</p>
-              <button
-                className="btn-primary btn-lg ob-btn-glow"
-                onClick={handleStart}
-                disabled={loading}
-              >
+              <button className="btn-primary btn-lg ob-btn-glow" onClick={handleStart} disabled={loading}>
                 {loading ? t.preparing : t.continue}
               </button>
             </div>
           )}
 
+          {/* ── Step 2 — Crispy wallet confirmation ── */}
           {step === 'confirm' && (
-            <div className="confirm-section ob-animate-in" key="confirm">
-              <div className="confirm-animation">
-                <div className="wallet-icon">💼</div>
-                <div className="loading-dots">
-                  <span /><span /><span />
-                </div>
+            <div className="ob-confirm-clean ob-animate-in" key="confirm">
+              {/* Animated wallet icon */}
+              <div className="ob-wallet-ring">
+                <div className="ob-wallet-pulse" />
+                <Icon name="wallet" size={30} color="#ffd700" />
               </div>
-              <h3>{t.creatingWallet}</h3>
-              <p className="confirm-text">{t.walletDesc}</p>
-              <div className="confirm-details">
-                <div className="detail-item">
-                  <span className="detail-label">{t.walletGenerated}</span>
-                  <span className="detail-value detail-addr">0x****...****</span>
-                </div>
+
+              <h3 className="ob-confirm-title">{t.creatingWallet}</h3>
+              <p className="ob-confirm-desc">{t.walletDesc}</p>
+
+              {/* Setup checklist */}
+              <div className="ob-setup-list">
+                {[
+                  { icon: 'check', color: '#10b981', label: t.walletGenerated, value: '0x****...****', mono: true },
+                  { icon: 'globe', color: '#10b981', label: 'Network',          value: t.network },
+                  { icon: 'bolt',  color: '#10b981', label: 'Gas',              value: t.gas },
+                ].map((item, i) => (
+                  <div key={i} className="ob-setup-row" style={{ animationDelay: `${i * 0.12}s` }}>
+                    <span className="ob-setup-icon-wrap">
+                      <Icon name={item.icon} size={13} color={item.color} />
+                    </span>
+                    <span className="ob-setup-label">{item.label}</span>
+                    <span className={`ob-setup-val ${item.mono ? 'ob-setup-val--mono' : ''}`}>{item.value}</span>
+                  </div>
+                ))}
               </div>
+
               <button className="btn-primary btn-lg ob-btn-glow" onClick={handleConfirm} disabled={loading}>
-                {loading ? t.settingUp : t.getStarted}
+                {loading
+                  ? <span className="ob-loading-row"><span className="ob-spin" />{t.settingUp}</span>
+                  : t.getStarted}
               </button>
-              <button className="btn-secondary" onClick={() => setStep('start')} disabled={loading}>
-                {t.back}
+
+              <button className="ob-back-link" onClick={() => setStep('start')} disabled={loading}>
+                <Icon name="back" size={13} color="#9ca3af" /> {t.back}
               </button>
             </div>
           )}
         </div>
 
-        {/* Benefits */}
-        <div className="onboarding-benefits">
-          {t.benefits.map((b, i) => (
-            <div key={i} className="ob-benefit" style={{ animationDelay: `${0.4 + i * 0.1}s` }}>
-              <span className="benefit-icon">{t.benefitIcons[i]}</span>
-              <p>{b}</p>
+        {/* ── Features section (replaces old benefit chips) ── */}
+        <div className="ob-features">
+          {FEATURES.map((f, i) => (
+            <div key={i} className="ob-feature-card" style={{ animationDelay: `${0.3 + i * 0.08}s` }}>
+              <div className="ob-feat-icon" style={{ background: `${f.color}18`, border: `1px solid ${f.color}40` }}>
+                <Icon name={f.icon} size={18} color={f.color} />
+              </div>
+              <div>
+                <span className="ob-feat-title">{f.title}</span>
+                <span className="ob-feat-desc">{f.desc}</span>
+              </div>
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );
