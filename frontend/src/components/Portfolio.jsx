@@ -64,22 +64,22 @@ export default function Portfolio({ user, positions, walletBalance, onBack }) {
           <div className="stat-card">
             <span className="stat-icon">🎯</span>
             <span className="stat-label">Accuracy</span>
-            <span className="stat-value">{accuracy}%</span>
+            <span className="stat-value animate">{accuracy}%</span>
           </div>
           <div className="stat-card">
             <span className="stat-icon">🏆</span>
             <span className="stat-label">Winnings</span>
-            <span className="stat-value">{totalWinnings.toFixed(2)} cUSD</span>
+            <span className="stat-value animate">{totalWinnings.toFixed(2)} cUSD</span>
           </div>
           <div className="stat-card">
             <span className="stat-icon">📊</span>
             <span className="stat-label">Positions</span>
-            <span className="stat-value">{positions.length}</span>
+            <span className="stat-value animate">{positions.length}</span>
           </div>
           <div className="stat-card">
             <span className="stat-icon">⚡</span>
             <span className="stat-label">Streak</span>
-            <span className="stat-value">{positions.length > 0 ? '2W' : '-'}</span>
+            <span className="stat-value animate">{positions.length > 0 ? '2W' : '-'}</span>
           </div>
         </div>
 

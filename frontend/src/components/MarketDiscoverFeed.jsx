@@ -10,7 +10,7 @@ const mockMarkets = [
     noOdds: 1.35,
     sentiment: 68,
     volume: 125430,
-    image: '🇦🇷',
+    image: 'https://flagcdn.com/ar.svg',
     confidence: 82,
     prediction: 'FAVORITES'
   },
@@ -23,7 +23,7 @@ const mockMarkets = [
     noOdds: 1.25,
     sentiment: 72,
     volume: 98760,
-    image: '🇫🇷',
+    image: 'https://flagcdn.com/fr.svg',
     confidence: 78,
     prediction: 'STRONG'
   },
@@ -36,7 +36,7 @@ const mockMarkets = [
     noOdds: 1.20,
     sentiment: 65,
     volume: 87340,
-    image: '🇬🇧',
+    image: 'https://flagcdn.com/gb.svg',
     confidence: 75,
     prediction: 'CONTENDER'
   },
@@ -49,7 +49,7 @@ const mockMarkets = [
     noOdds: 1.30,
     sentiment: 71,
     volume: 156200,
-    image: '🇧🇷',
+    image: 'https://flagcdn.com/br.svg',
     confidence: 80,
     prediction: 'FAVORITES'
   },
@@ -62,7 +62,7 @@ const mockMarkets = [
     noOdds: 1.85,
     sentiment: 58,
     volume: 64320,
-    image: '🇺🇸',
+    image: 'https://flagcdn.com/us.svg',
     confidence: 72,
     prediction: 'LIKELY'
   },
@@ -75,7 +75,7 @@ const mockMarkets = [
     noOdds: 1.65,
     sentiment: 69,
     volume: 112560,
-    image: '🇪🇸',
+    image: 'https://flagcdn.com/es.svg',
     confidence: 76,
     prediction: 'PROBABLE'
   },
@@ -88,7 +88,7 @@ const mockMarkets = [
     noOdds: 1.18,
     sentiment: 62,
     volume: 73890,
-    image: '🇩🇪',
+    image: 'https://flagcdn.com/de.svg',
     confidence: 71,
     prediction: 'CONTENDER'
   },
@@ -100,11 +100,12 @@ const mockMarkets = [
     noOdds: 2.1,
     sentiment: 74,
     volume: 203450,
-    image: '⚽',
+    image: 'https://cdn-icons-png.flaticon.com/512/2436/2436481.png',
     confidence: 79,
     prediction: 'LIKELY'
   }
 ];
+
 
 export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance, onNavigatePortfolio }) {
   const [filter, setFilter] = useState('all');
@@ -204,7 +205,13 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
             onClick={() => onSelectMarket(market)}
           >
             <div className="card-header">
-              <div className="market-image-wc">{market.image}</div>
+              <div className="market-image-wc">
+                {market.image.includes('http') || market.image.includes('cdn') ? (
+                  <img src={market.image} alt={market.team || 'market'} className="flag-icon" />
+                ) : (
+                  market.image
+                )}
+              </div>
               <div className="market-meta">
                 <span className="category-badge">{market.category}</span>
                 <span className="confidence-badge">{market.confidence}%</span>

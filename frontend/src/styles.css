@@ -47,7 +47,29 @@ button {
   font-size: 1rem;
   font-weight: 700;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+
+button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1);
+  transform-origin: 50%;
+  pointer-events: none;
+}
+
+button:active::after {
+  animation: ripple 0.6s ease-out;
+}
+
 
 .btn-primary {
   background: #111111;
@@ -165,7 +187,7 @@ button {
 .form-group input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #374151;
+  border: 2px solid #92400e;
   border-radius: 10px;
   background: #1f2937;
   color: #e5e7eb;
@@ -175,7 +197,7 @@ button {
 
 .form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #fbbf24;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -295,7 +317,7 @@ button {
 .connector {
   width: 30px;
   height: 2px;
-  background: #374151;
+  background: #92400e;
 }
 
 .login-form {
@@ -402,7 +424,7 @@ button {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: #fbbf24;
   animation: pulse 1.4s infinite;
 }
 
@@ -421,6 +443,49 @@ button {
   }
   30% {
     opacity: 1;
+  }
+}
+
+/* Counter & Chart Animations */
+@keyframes countUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes barSlide {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
   }
 }
 
@@ -448,7 +513,7 @@ button {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid #92400e;
 }
 
 .detail-item:last-child {
@@ -477,7 +542,7 @@ button {
 
 .benefit {
   background: #1f2937;
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 16px;
   text-align: center;
@@ -520,7 +585,7 @@ button {
 }
 
 .wallet-info {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   padding: 12px 16px;
   border-radius: 10px;
   display: flex;
@@ -548,7 +613,7 @@ button {
   width: 100%;
   padding: 12px 16px 12px 40px;
   background: #1f2937;
-  border: 2px solid #374151;
+  border: 2px solid #92400e;
   border-radius: 10px;
   color: #e5e7eb;
   font-size: 1rem;
@@ -556,7 +621,7 @@ button {
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #fbbf24;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -584,7 +649,7 @@ button {
 
 .category-tab {
   background: #1f2937;
-  border: 2px solid #374151;
+  border: 2px solid #92400e;
   color: #9ca3af;
   padding: 10px 14px;
   border-radius: 10px;
@@ -602,8 +667,8 @@ button {
 }
 
 .category-tab.active {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-color: #fbbf24;
   color: white;
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
 }
@@ -621,19 +686,20 @@ button {
 
 .market-card {
   background: #1f2937;
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
+  animation: slideInUp 0.5s ease-out;
 }
 
 .market-card:hover {
   transform: translateY(-4px);
-  border-color: #3b82f6;
-  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2);
+  border-color: #fbbf24;
+  box-shadow: 0 12px 30px rgba(251, 191, 36, 0.2);
 }
 
 .market-card::before {
@@ -643,7 +709,7 @@ button {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -651,6 +717,7 @@ button {
 .market-card:hover::before {
   opacity: 1;
 }
+
 
 .card-header {
   display: flex;
@@ -665,7 +732,7 @@ button {
 
 .category-badge {
   background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  color: #fbbf24;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -760,7 +827,7 @@ button {
 
 .divider-vertical {
   width: 1px;
-  background: #374151;
+  background: #92400e;
 }
 
 /* Volume Footer */
@@ -769,7 +836,7 @@ button {
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  border-top: 1px solid #374151;
+  border-top: 1px solid #92400e;
   font-size: 0.9rem;
   margin-bottom: 10px;
 }
@@ -786,7 +853,7 @@ button {
 /* Card CTA */
 .card-cta {
   text-align: center;
-  color: #60a5fa;
+  color: #fbbf24;
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -837,7 +904,7 @@ button {
 /* Market Preview */
 .market-preview {
   background: #1f2937;
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 14px;
   padding: 24px;
   text-align: center;
@@ -870,7 +937,7 @@ button {
 .prediction-btn {
   width: 100%;
   background: #1f2937;
-  border: 2px solid #374151;
+  border: 2px solid #92400e;
   border-radius: 12px;
   padding: 16px;
   margin: 8px 0;
@@ -918,7 +985,7 @@ button {
 
 .prediction-odds {
   background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  color: #fbbf24;
   padding: 4px 12px;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -957,7 +1024,7 @@ button {
   width: 100%;
   padding: 12px 16px 12px 40px;
   background: #1f2937;
-  border: 2px solid #374151;
+  border: 2px solid #92400e;
   border-radius: 10px;
   color: #e5e7eb;
   font-size: 1.1rem;
@@ -967,7 +1034,7 @@ button {
 
 .amount-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #fbbf24;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -995,7 +1062,7 @@ button {
 
 .quick-btn {
   background: #1f2937;
-  border: 2px solid #374151;
+  border: 2px solid #92400e;
   color: #e5e7eb;
   padding: 10px;
   border-radius: 8px;
@@ -1004,14 +1071,14 @@ button {
 }
 
 .quick-btn:hover {
-  border-color: #3b82f6;
+  border-color: #fbbf24;
   background: rgba(59, 130, 246, 0.1);
 }
 
 /* Calculation Card */
 .calculation-card {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 14px;
   padding: 20px;
   margin-bottom: 28px;
@@ -1036,7 +1103,7 @@ button {
 }
 
 .calc-value.highlight {
-  color: #60a5fa;
+  color: #fbbf24;
   font-size: 1.1rem;
 }
 
@@ -1053,14 +1120,14 @@ button {
 
 .divider {
   height: 1px;
-  background: #374151;
+  background: #92400e;
   margin: 12px 0;
 }
 
 /* Slippage Control */
 .slippage-control {
   background: #1f2937;
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 24px;
@@ -1079,7 +1146,7 @@ button {
 }
 
 .slippage-value {
-  color: #60a5fa;
+  color: #fbbf24;
   font-weight: 700;
   font-size: 1.1rem;
 }
@@ -1101,7 +1168,7 @@ button {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
   cursor: pointer;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
@@ -1110,7 +1177,7 @@ button {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
   cursor: pointer;
   border: none;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
@@ -1176,7 +1243,7 @@ button {
 
 .status-item {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 14px;
   text-align: center;
@@ -1227,16 +1294,18 @@ button {
 
 .stat-card {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 16px;
   text-align: center;
   transition: all 0.3s ease;
+  animation: slideInUp 0.5s ease-out;
 }
 
 .stat-card:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+  border-color: #fbbf24;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+  transform: translateY(-2px);
 }
 
 .stat-icon {
@@ -1251,6 +1320,19 @@ button {
   color: #9ca3af;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fbbf24;
+  margin-top: 6px;
+}
+
+.stat-value.animate {
+  animation: countUp 0.6s ease-out;
+}
   margin-bottom: 6px;
 }
 
@@ -1263,7 +1345,7 @@ button {
 /* Accuracy Chart */
 .accuracy-chart {
   background: #1f2937;
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 24px;
@@ -1294,15 +1376,24 @@ button {
 
 .chart-bar {
   width: 100%;
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
   border-radius: 4px 4px 0 0;
   min-height: 5px;
   transition: all 0.3s ease;
+  animation: barSlide 0.8s ease-out backwards;
 }
 
 .chart-bar:hover {
   filter: brightness(1.2);
 }
+
+.chart-bar-wrapper:nth-child(1) .chart-bar { animation-delay: 0.1s; }
+.chart-bar-wrapper:nth-child(2) .chart-bar { animation-delay: 0.2s; }
+.chart-bar-wrapper:nth-child(3) .chart-bar { animation-delay: 0.3s; }
+.chart-bar-wrapper:nth-child(4) .chart-bar { animation-delay: 0.4s; }
+.chart-bar-wrapper:nth-child(5) .chart-bar { animation-delay: 0.5s; }
+.chart-bar-wrapper:nth-child(6) .chart-bar { animation-delay: 0.6s; }
+
 
 .chart-label {
   font-size: 0.75rem;
@@ -1319,7 +1410,7 @@ button {
   display: flex;
   gap: 0;
   margin-bottom: 20px;
-  border-bottom: 2px solid #374151;
+  border-bottom: 2px solid #92400e;
 }
 
 .tab {
@@ -1338,8 +1429,8 @@ button {
 }
 
 .tab.active {
-  color: #60a5fa;
-  border-bottom-color: #60a5fa;
+  color: #fbbf24;
+  border-bottom-color: #fbbf24;
 }
 
 .positions-list {
@@ -1350,23 +1441,23 @@ button {
 
 .position-card {
   background: #1f2937;
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 14px;
   transition: all 0.3s ease;
 }
 
 .position-card:hover {
-  border-color: #3b82f6;
+  border-color: #fbbf24;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 .position-card.active-position {
-  border-color: #3b82f6;
+  border-color: #fbbf24;
 }
 
 .position-card.closed-position {
-  border-color: #374151;
+  border-color: #92400e;
 }
 
 .position-card.closed-position.won {
@@ -1394,7 +1485,7 @@ button {
 
 .prediction-badge {
   background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  color: #fbbf24;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.7rem;
@@ -1465,7 +1556,7 @@ button {
 /* Withdraw Section */
 .withdraw-section {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 20px;
 }
@@ -1568,7 +1659,7 @@ button {
 }
 
 .info-item {
-  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  background: linear-gradient(135deg, #92400e 0%, #1f2937 100%);
   border: 1px solid #4b5563;
   border-radius: 10px;
   padding: 10px 12px;
@@ -1626,10 +1717,16 @@ button {
   display: block;
   font-size: 1.4rem;
   font-weight: 800;
-  color: #60a5fa;
+  color: #fbbf24;
   line-height: 1;
   margin-bottom: 4px;
+  animation: countUp 0.6s ease-out;
 }
+
+.stat-number.animate {
+  animation: countUp 0.6s ease-out;
+}
+
 
 .stat-name {
   display: block;
@@ -1643,7 +1740,7 @@ button {
 /* World Cup Market Card */
 .wc-card {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
 }
 
 .wc-card:hover {
@@ -1658,7 +1755,19 @@ button {
 .market-image-wc {
   font-size: 2.8rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.flag-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 
 /* Confidence Badge */
 .confidence-badge {
@@ -1678,7 +1787,7 @@ button {
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-top: 1px solid #374151;
+  border-top: 1px solid #92400e;
   margin-top: 12px;
 }
 
@@ -1689,7 +1798,7 @@ button {
 
 .volume-badge {
   background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  color: #fbbf24;
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -1714,12 +1823,12 @@ button {
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #374151;
+  border-top: 1px solid #92400e;
 }
 
 .footer-stat-item {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid #374151;
+  border: 1px solid #92400e;
   border-radius: 12px;
   padding: 16px;
   text-align: center;
