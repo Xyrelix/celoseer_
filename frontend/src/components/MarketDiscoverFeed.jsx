@@ -187,11 +187,11 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
           <span className="stat-name">Accuracy</span>
         </div>
         <div className="stat-box">
-          <span className="stat-number">32</span>
+          <span className="stat-number">48</span>
           <span className="stat-name">Teams</span>
         </div>
         <div className="stat-box">
-          <span className="stat-number">12</span>
+          <span className="stat-number">16</span>
           <span className="stat-name">Stadiums</span>
         </div>
       </div>
@@ -269,7 +269,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
       <div className="footer-stats">
         <div className="footer-stat-item">
           <span className="footer-stat-icon">🌍</span>
-          <span className="footer-stat-text">12 Host Cities</span>
+          <span className="footer-stat-text">16 Host Cities</span>
         </div>
         <div className="footer-stat-item">
           <span className="footer-stat-icon">🏟️</span>
@@ -277,7 +277,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         </div>
         <div className="footer-stat-item">
           <span className="footer-stat-icon">⚽</span>
-          <span className="footer-stat-text">64 Matches</span>
+          <span className="footer-stat-text">104 Matches</span>
         </div>
       </div>
     </div>
