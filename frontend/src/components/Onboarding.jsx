@@ -1,114 +1,62 @@
 import { useState } from 'react';
 
 export default function Onboarding({ onComplete }) {
-  const [step, setStep] = useState('login');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+  const [step, setStep] = useState('start');
   const [loading, setLoading] = useState(false);
 
-  const handleEmailSignup = async (e) => {
-    e.preventDefault();
+  const handleStart = async () => {
     setLoading(true);
-    
-    // Simulate account abstraction - creating smart wallet
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    if (email && username) {
-      onComplete({
-        email,
-        username,
-        walletAddress: '0x' + Math.random().toString(16).slice(2, 42),
-        initialBalance: 100,
-        createdAt: new Date().toISOString()
-      });
-    }
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setLoading(false);
+    setStep('confirm');
   };
 
-  const handleSocialLogin = async (provider) => {
+  const handleConfirm = async () => {
     setLoading(true);
-    // Simulate social login + smart account creation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
     onComplete({
-      email: `user-${provider}@${provider}.com`,
-      username: `user_${Math.random().toString(36).substring(7)}`,
+      username: `seer_${Math.random().toString(36).substring(2, 8)}`,
       walletAddress: '0x' + Math.random().toString(16).slice(2, 42),
       initialBalance: 100,
-      provider,
       createdAt: new Date().toISOString()
     });
+
     setLoading(false);
   };
 
   return (
     <div className="onboarding">
       <div className="onboarding-hero">
-        <div className="logo-circle">🎯</div>
-        <h1>CeloSeer</h1>
-        <p className="tagline">Predict. Earn. Repeat.</p>
+        <div className="logo-circle">
+          <img src="/CeloSeer_logo.jpeg" alt="CeloSeer logo" className="logo-image" />
+        </div>
+        <div className="logo-wordmark">
+          <img src="/CeloSeer.png" alt="CeloSeer" />
+        </div>
       </div>
 
       <div className="onboarding-card">
         <div className="steps-indicator">
-          <div className={`step ${step === 'login' ? 'active' : 'done'}`}>1</div>
+          <div className={`step ${step === 'start' ? 'active' : 'done'}`}>1</div>
           <div className="connector"></div>
           <div className={`step ${step === 'confirm' ? 'active' : ''}`}>2</div>
         </div>
 
-        {step === 'login' && (
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            setStep('confirm');
-          }} className="login-form">
-            <div className="form-group">
-              <label>Email Address</label>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Username</label>
-              <input
-                type="text"
-                placeholder="Choose your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-
-            <button type="submit" className="btn-primary btn-lg">
-              Continue
-            </button>
-
-            <div className="divider">or</div>
+        {step === 'start' && (
+          <div className="start-section">
+            <p className="start-copy">
+              Begin your CeloSeer journey with a gasless smart wallet.
+            </p>
 
             <button
-              type="button"
-              className="btn-social"
-              onClick={() => handleSocialLogin('google')}
+              className="btn-primary btn-lg"
+              onClick={handleStart}
               disabled={loading}
             >
-              <span className="social-icon">G</span>
-              Sign in with Google
+              {loading ? 'Preparing...' : 'Continue'}
             </button>
-
-            <button
-              type="button"
-              className="btn-social"
-              onClick={() => handleSocialLogin('twitter')}
-              disabled={loading}
-            >
-              <span className="social-icon">𝕏</span>
-              Sign in with X
-            </button>
-          </form>
+          </div>
         )}
 
         {step === 'confirm' && (
@@ -129,14 +77,6 @@ export default function Onboarding({ onComplete }) {
 
             <div className="confirm-details">
               <div className="detail-item">
-                <span className="detail-label">✓ Email Verified</span>
-                <span className="detail-value">{email}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">✓ Username Set</span>
-                <span className="detail-value">@{username}</span>
-              </div>
-              <div className="detail-item">
                 <span className="detail-label">✓ Wallet Generated</span>
                 <span className="detail-value detail-addr">0x****...****</span>
               </div>
@@ -144,10 +84,7 @@ export default function Onboarding({ onComplete }) {
 
             <button
               className="btn-primary btn-lg"
-              onClick={(e) => {
-                e.preventDefault();
-                handleEmailSignup(e);
-              }}
+              onClick={handleConfirm}
               disabled={loading}
             >
               {loading ? 'Setting up...' : 'Get Started'}
@@ -155,7 +92,7 @@ export default function Onboarding({ onComplete }) {
 
             <button
               className="btn-secondary"
-              onClick={() => setStep('login')}
+              onClick={() => setStep('start')}
               disabled={loading}
             >
               Back
