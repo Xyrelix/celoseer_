@@ -3,63 +3,106 @@ import { useState } from 'react';
 const mockMarkets = [
   {
     id: 1,
-    title: 'Bitcoin hits $100k by end of 2026?',
-    category: 'crypto',
-    yesOdds: 2.45,
-    noOdds: 1.65,
-    sentiment: 72,
-    volume: 45230,
-    image: '₿'
+    title: 'Argentina to Win World Cup 2026?',
+    category: 'knockout',
+    team: 'Argentina',
+    yesOdds: 3.5,
+    noOdds: 1.35,
+    sentiment: 68,
+    volume: 125430,
+    image: '🇦🇷',
+    confidence: 82,
+    prediction: 'FAVORITES'
   },
   {
     id: 2,
-    title: 'US unemployment stays below 4%?',
-    category: 'economics',
-    yesOdds: 1.89,
-    noOdds: 2.15,
-    sentiment: 58,
-    volume: 28910,
-    image: '📊'
+    title: 'France to Win World Cup 2026?',
+    category: 'knockout',
+    team: 'France',
+    yesOdds: 4.2,
+    noOdds: 1.25,
+    sentiment: 72,
+    volume: 98760,
+    image: '🇫🇷',
+    confidence: 78,
+    prediction: 'STRONG'
   },
   {
     id: 3,
-    title: 'AI passes medical licensing exam?',
-    category: 'tech',
-    yesOdds: 3.2,
-    noOdds: 1.45,
-    sentiment: 81,
-    volume: 56780,
-    image: '🤖'
+    title: 'England to Win World Cup 2026?',
+    category: 'knockout',
+    team: 'England',
+    yesOdds: 4.8,
+    noOdds: 1.20,
+    sentiment: 65,
+    volume: 87340,
+    image: '🇬🇧',
+    confidence: 75,
+    prediction: 'CONTENDER'
   },
   {
     id: 4,
-    title: 'Celo network TVL reaches $1B?',
-    category: 'crypto',
-    yesOdds: 2.8,
-    noOdds: 1.52,
-    sentiment: 68,
-    volume: 33450,
-    image: '💰'
+    title: 'Brazil to Win World Cup 2026?',
+    category: 'knockout',
+    team: 'Brazil',
+    yesOdds: 3.8,
+    noOdds: 1.30,
+    sentiment: 71,
+    volume: 156200,
+    image: '🇧🇷',
+    confidence: 80,
+    prediction: 'FAVORITES'
   },
   {
     id: 5,
-    title: 'Apple releases new AR glasses?',
-    category: 'tech',
-    yesOdds: 1.95,
-    noOdds: 2.05,
-    sentiment: 55,
-    volume: 41200,
-    image: '👓'
+    title: 'USA to Reach World Cup Semi-Finals?',
+    category: 'stage',
+    team: 'USA',
+    yesOdds: 2.1,
+    noOdds: 1.85,
+    sentiment: 58,
+    volume: 64320,
+    image: '🇺🇸',
+    confidence: 72,
+    prediction: 'LIKELY'
   },
   {
     id: 6,
-    title: 'Ethereum fees drop below $0.10?',
-    category: 'crypto',
-    yesOdds: 2.6,
-    noOdds: 1.6,
+    title: 'Spain to Reach World Cup Final?',
+    category: 'stage',
+    team: 'Spain',
+    yesOdds: 2.45,
+    noOdds: 1.65,
+    sentiment: 69,
+    volume: 112560,
+    image: '🇪🇸',
+    confidence: 76,
+    prediction: 'PROBABLE'
+  },
+  {
+    id: 7,
+    title: 'Germany to Win World Cup 2026?',
+    category: 'knockout',
+    team: 'Germany',
+    yesOdds: 5.5,
+    noOdds: 1.18,
+    sentiment: 62,
+    volume: 73890,
+    image: '🇩🇪',
+    confidence: 71,
+    prediction: 'CONTENDER'
+  },
+  {
+    id: 8,
+    title: 'Final Match Over 2.5 Goals?',
+    category: 'prop',
+    yesOdds: 1.65,
+    noOdds: 2.1,
     sentiment: 74,
-    volume: 52310,
-    image: '⟠'
+    volume: 203450,
+    image: '⚽',
+    confidence: 79,
+    prediction: 'LIKELY'
   }
 ];
 
@@ -74,26 +117,35 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
   });
 
   const categories = [
-    { id: 'all', label: 'All Markets', icon: '📺' },
-    { id: 'crypto', label: 'Crypto', icon: '₿' },
-    { id: 'tech', label: 'Technology', icon: '🚀' },
-    { id: 'economics', label: 'Economics', icon: '💹' }
+    { id: 'all', label: 'All Markets', icon: '🏆' },
+    { id: 'knockout', label: 'Tournament Winners', icon: '👑' },
+    { id: 'stage', label: 'Stage Advances', icon: '📈' },
+    { id: 'prop', label: 'Props & Parlays', icon: '⚽' }
   ];
 
   return (
-    <div className="discover-feed">
+    <div className="discover-feed world-cup-theme">
       {/* Header */}
       <div className="feed-header">
         <div className="header-top">
-          <h1>Markets</h1>
+          <div className="header-title">
+            <h1>🏆 FIFA World Cup 2026</h1>
+            <p className="subtitle">AI-Powered Predictions & Live Odds</p>
+          </div>
           <button className="btn-portfolio" onClick={onNavigatePortfolio} title="View your portfolio">
-            <span className="portfolio-icon">📈</span>
+            <span className="portfolio-icon">📊</span>
           </button>
         </div>
 
         <div className="wallet-info">
-          <span className="wallet-label">Wallet Balance</span>
-          <span className="wallet-amount">{walletBalance.toFixed(2)} cUSD</span>
+          <div className="info-item">
+            <span className="info-label">Your Balance</span>
+            <span className="info-value">{walletBalance.toFixed(2)} cUSD</span>
+          </div>
+          <div className="info-item">
+            <span className="info-label">AI Accuracy</span>
+            <span className="info-value accuracy">82.4%</span>
+          </div>
         </div>
       </div>
 
@@ -101,7 +153,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Search markets..."
+          placeholder="Search teams or matches..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -123,18 +175,39 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         ))}
       </div>
 
+      {/* AI Stats Bar */}
+      <div className="ai-stats-bar">
+        <div className="stat-box">
+          <span className="stat-number">847</span>
+          <span className="stat-name">Predictions</span>
+        </div>
+        <div className="stat-box">
+          <span className="stat-number">82.4%</span>
+          <span className="stat-name">Accuracy</span>
+        </div>
+        <div className="stat-box">
+          <span className="stat-number">32</span>
+          <span className="stat-name">Teams</span>
+        </div>
+        <div className="stat-box">
+          <span className="stat-number">12</span>
+          <span className="stat-name">Stadiums</span>
+        </div>
+      </div>
+
       {/* Markets Grid */}
       <div className="markets-container">
         {filteredMarkets.map(market => (
           <div
             key={market.id}
-            className="market-card"
+            className="market-card wc-card"
             onClick={() => onSelectMarket(market)}
           >
             <div className="card-header">
-              <div className="market-image">{market.image}</div>
+              <div className="market-image-wc">{market.image}</div>
               <div className="market-meta">
                 <span className="category-badge">{market.category}</span>
+                <span className="confidence-badge">{market.confidence}%</span>
               </div>
             </div>
 
@@ -162,13 +235,17 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
               </div>
             </div>
 
-            <div className="volume-footer">
-              <span className="volume-label">Volume</span>
-              <span className="volume-value">{(market.volume / 1000).toFixed(1)}k cUSD</span>
+            <div className="card-bottom">
+              <div className="card-stats">
+                <div className="volume-badge">
+                  <span>{(market.volume / 1000).toFixed(0)}k</span>
+                </div>
+              </div>
+              <span className="prediction-tag">{market.prediction}</span>
             </div>
 
             <div className="card-cta">
-              <span className="cta-text">Tap to wager →</span>
+              <span className="cta-text">Place Prediction →</span>
             </div>
           </div>
         ))}
@@ -180,6 +257,22 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
           <p>No markets found</p>
         </div>
       )}
+
+      {/* Footer Stats */}
+      <div className="footer-stats">
+        <div className="footer-stat-item">
+          <span className="footer-stat-icon">🌍</span>
+          <span className="footer-stat-text">12 Host Cities</span>
+        </div>
+        <div className="footer-stat-item">
+          <span className="footer-stat-icon">🏟️</span>
+          <span className="footer-stat-text">16 Stadiums</span>
+        </div>
+        <div className="footer-stat-item">
+          <span className="footer-stat-icon">⚽</span>
+          <span className="footer-stat-text">64 Matches</span>
+        </div>
+      </div>
     </div>
   );
 }

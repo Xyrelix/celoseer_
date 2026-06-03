@@ -1422,3 +1422,248 @@ button {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* ============================================
+   WORLD CUP 2026 THEME - aifootballpredict.com
+   ============================================ */
+
+.world-cup-theme {
+  background: linear-gradient(180deg, #0f0f0f 0%, #1a1a2e 100%);
+}
+
+/* Enhanced Header */
+.header-title {
+  flex: 1;
+}
+
+.header-title h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Wallet Info - Enhanced */
+.wallet-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: transparent;
+  padding: 0;
+  margin-top: 16px;
+}
+
+.info-item {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border: 1px solid #4b5563;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.info-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f3f4f6;
+}
+
+.info-value.accuracy {
+  color: #34d399;
+  font-size: 1.2rem;
+}
+
+/* AI Stats Bar - aifootballpredict inspired */
+.ai-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-box {
+  text-align: center;
+  padding: 12px 8px;
+  border-radius: 8px;
+  background: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #60a5fa;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-name {
+  display: block;
+  font-size: 0.7rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* World Cup Market Card */
+.wc-card {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border: 1px solid #374151;
+}
+
+.wc-card:hover {
+  border-color: #f97316;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
+}
+
+.wc-card::before {
+  background: linear-gradient(90deg, #ef4444, #f97316, #fbbf24);
+}
+
+.market-image-wc {
+  font-size: 2.8rem;
+  font-weight: bold;
+}
+
+/* Confidence Badge */
+.confidence-badge {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  margin-left: 8px;
+}
+
+/* Card Bottom - Stats & Tags */
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #374151;
+  margin-top: 12px;
+}
+
+.card-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.volume-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.prediction-tag {
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Footer Stats */
+.footer-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #374151;
+}
+
+.footer-stat-item {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.footer-stat-item:hover {
+  border-color: #f97316;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+  transform: translateY(-2px);
+}
+
+.footer-stat-icon {
+  display: block;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.footer-stat-text {
+  display: block;
+  font-size: 0.9rem;
+  color: #d1d5db;
+  font-weight: 600;
+}
+
+/* Responsive World Cup */
+@media (max-width: 480px) {
+  .header-title h1 {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+  }
+
+  .ai-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .stat-number {
+    font-size: 1.2rem;
+  }
+
+  .stat-name {
+    font-size: 0.65rem;
+  }
+
+  .footer-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
