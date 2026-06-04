@@ -7,8 +7,9 @@ import "../src/PredictionMarket.sol";
 contract Deploy is Script {
     // cUSD addresses per chain
     function cUSDForChain(uint256 chainId) internal pure returns (address) {
-        if (chainId == 44787) return 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; // Alfajores
-        if (chainId == 42220) return 0x765DE816845861e75A25fCA122bb6898B8B1282a; // Celo mainnet
+        if (chainId == 44787)    return 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; // Alfajores
+        if (chainId == 11142220) return 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; // Celo Sepolia (verify addr)
+        if (chainId == 42220)    return 0x765DE816845861e75A25fCA122bb6898B8B1282a; // Celo mainnet
         revert("Unsupported chain");
     }
 

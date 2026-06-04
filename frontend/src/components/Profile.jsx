@@ -1,28 +1,49 @@
 import { useState } from 'react';
 import Icon from './Icon';
+import { useAuth } from '../hooks/useAuth';
 
 const TREND = [
   { week: 'W1', v: 45 }, { week: 'W2', v: 52 }, { week: 'W3', v: 48 },
   { week: 'W4', v: 61 }, { week: 'W5', v: 58 }, { week: 'W6', v: 0 },
 ];
 
-export default function Profile({ user, positions, walletBalance, onBack }) {
+function deriveDisplayName(privyUser) {
+  if (!privyUser) return 'Seer';
+  return (
+    privyUser.google?.name ||
+    privyUser.twitter?.username ||
+    privyUser.discord?.username ||
+    privyUser.apple?.email?.split('@')[0] ||
+    privyUser.email?.address?.split('@')[0] ||
+    `seer_${privyUser.id?.slice(-6)}`
+  );
+}
+
+export default function Profile({ user, walletAddress, displayAddress, balance, positions, onBack }) {
+  const { logout } = useAuth();
   const [tab, setTab] = useState('active');
 
   const active = positions.filter(p => p.status === 'active');
-  const closed = positions.filter(p => p.status === 'closed');
+  const closed  = positions.filter(p => p.status === 'closed');
 
-  const totalStaked   = positions.reduce((s, p) => s + p.amount, 0);
+  const totalStaked    = positions.reduce((s, p) => s + p.amount, 0);
   const totalPotential = active.reduce((s, p) => s + parseFloat(p.potentialPayout || 0), 0);
   const totalWinnings  = closed.filter(p => p.result === 'won').reduce((s, p) => s + parseFloat(p.potentialProfit || 0), 0);
-  const accuracy       = positions.length > 0 ? Math.round((positions.filter(p => p.result === 'won').length / positions.length) * 100) : 0;
+  const accuracy       = positions.length > 0
+    ? Math.round((positions.filter(p => p.result === 'won').length / positions.length) * 100)
+    : 0;
 
   const trend = TREND.map((t, i) => ({ ...t, v: i === TREND.length - 1 ? accuracy : t.v }));
   const maxTrend = Math.max(...trend.map(t => t.v), 1);
 
-  const shortAddr = user?.walletAddress
-    ? `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`
-    : '0x—';
+  const displayName = deriveDisplayName(user);
+  const shortAddr   = displayAddress || (walletAddress
+    ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+    : '—');
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <div className="profile-page">
@@ -32,7 +53,9 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
           <Icon name="back" size={20} color="#ffd700" />
         </button>
         <h2 className="profile-topbar-title">My Profile</h2>
-        <div className="prof-spacer" />
+        <button className="prof-logout-btn" onClick={handleLogout} title="Sign out">
+          <Icon name="close" size={18} color="#9ca3af" />
+        </button>
       </div>
 
       {/* User Identity card */}
@@ -41,7 +64,7 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
           <Icon name="user" size={36} color="#ffd700" />
         </div>
         <div className="prof-info">
-          <span className="prof-username">{user?.username || 'Unknown'}</span>
+          <span className="prof-username">{displayName}</span>
           <span className="prof-addr">{shortAddr}</span>
         </div>
         <div className="prof-shield">
@@ -56,7 +79,9 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
           <Icon name="wallet" size={20} color="#ffd700" />
           <span className="pbal-label">Account Balance</span>
         </div>
-        <div className="pbal-amount">{walletBalance.toFixed(2)} <span className="pbal-currency">cUSD</span></div>
+        <div className="pbal-amount">
+          {parseFloat(balance || 0).toFixed(2)} <span className="pbal-currency">cUSD</span>
+        </div>
         <div className="pbal-row">
           <div className="pbal-item">
             <span className="pbal-item-label">Total Staked</span>
@@ -64,14 +89,14 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
           </div>
           <div className="pbal-divider" />
           <div className="pbal-item">
-            <span className="pbal-item-label">At Risk</span>
+            <span className="pbal-item-label">Potential</span>
             <span className="pbal-item-val risk">{totalPotential.toFixed(2)} cUSD</span>
           </div>
         </div>
-        <button className="btn-primary pbal-withdraw-btn">
-          <Icon name="wallet" size={16} color="#111" />
-          Withdraw to Bank
-        </button>
+        <div className="pbal-wallet-addr">
+          <Icon name="coin" size={13} color="#6b7280" />
+          <span className="pbal-addr-text">{walletAddress || '—'}</span>
+        </div>
       </div>
 
       {/* Performance stats */}
@@ -81,10 +106,10 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
       </div>
       <div className="stats-grid">
         {[
-          { icon: 'target', label: 'Accuracy',  val: `${accuracy}%` },
-          { icon: 'trophy', label: 'Winnings',   val: `${totalWinnings.toFixed(2)} cUSD` },
+          { icon: 'target',    label: 'Accuracy',  val: `${accuracy}%` },
+          { icon: 'trophy',    label: 'Winnings',  val: `${totalWinnings.toFixed(2)} cUSD` },
           { icon: 'standings', label: 'Positions', val: positions.length },
-          { icon: 'bolt',   label: 'Streak',     val: positions.length > 0 ? '2W' : '—' },
+          { icon: 'bolt',      label: 'Streak',    val: positions.length > 0 ? '2W' : '—' },
         ].map((s, i) => (
           <div key={i} className="stat-card glass-market" style={{ animationDelay: `${i * 0.07}s` }}>
             <Icon name={s.icon} size={22} color="#ffd700" className="stat-svg-icon" />
@@ -104,7 +129,9 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
                 className="chart-bar"
                 style={{
                   height: `${(t.v / maxTrend) * 100}%`,
-                  background: t.v >= 50 ? 'linear-gradient(180deg,#10b981,#34d399)' : 'linear-gradient(180deg,#ef4444,#f87171)',
+                  background: t.v >= 50
+                    ? 'linear-gradient(180deg,#10b981,#34d399)'
+                    : 'linear-gradient(180deg,#ef4444,#f87171)',
                 }}
               />
               <span className="chart-label">{t.week}</span>
@@ -179,6 +206,17 @@ export default function Profile({ user, positions, walletBalance, onBack }) {
             </div>
           )
         )}
+      </div>
+
+      {/* Sign out */}
+      <div style={{ padding: '16px 0 8px' }}>
+        <button
+          className="prof-signout-btn"
+          onClick={handleLogout}
+        >
+          <Icon name="lock" size={16} color="#ef4444" />
+          Sign Out
+        </button>
       </div>
 
       <div className="home-bottom-pad" />

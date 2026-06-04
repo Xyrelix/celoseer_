@@ -1,25 +1,18 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// Modern stack (Vite 8 + wagmi 3 + Privy v3) ships clean ESM, so none of the
+// old WalletConnect aliases / dedupe / CJS-interop includes are needed.
 export default defineConfig({
   plugins: [react()],
   server: { port: 3000 },
-  optimizeDeps: {
-    exclude: [
-      '@wagmi/connectors',
-      '@reown/appkit',
-      '@reown/appkit-ui',
-      '@reown/appkit-utils',
-      '@reown/appkit-wallet',
-      '@walletconnect/universal-provider',
-    ],
-    esbuildOptions: {
-      // react-stately private subpath not listed in its exports map
-      external: ['react-stately/private/flags/flags'],
+  resolve: {
+    alias: {
+      // Some web3 deps reference the Node `buffer` global in the browser.
+      buffer: 'buffer/',
     },
   },
-  build: {
-    commonjsOptions: { transformMixedEsModules: true },
-    sourcemap: false,
+  define: {
+    'process.env': {},
   },
 });

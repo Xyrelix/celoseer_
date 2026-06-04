@@ -9,21 +9,18 @@ import InsightsTab  from './components/InsightsTab';
 import OddsSlip     from './components/OddsSlip';
 import Profile      from './components/Profile';
 import Icon         from './components/Icon';
+import { useAuth }          from './hooks/useAuth';
+import { useWalletBalance } from './hooks/useWalletBalance';
 import './styles.css';
 
 function App() {
-  const [appState,       setAppState]       = useState('onboarding');
-  const [activeTab,      setActiveTab]      = useState('home');
-  const [user,           setUser]           = useState(null);
-  const [selectedMarket, setSelectedMarket] = useState(null);
-  const [walletBalance,  setWalletBalance]  = useState(0);
-  const [portfolio,      setPortfolio]      = useState([]);
+  const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
+  const { balance } = useWalletBalance(walletAddress);
 
-  const handleOnboardingComplete = (userData) => {
-    setUser(userData);
-    setWalletBalance(userData.initialBalance || 100);
-    setAppState('main');
-  };
+  const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile'
+  const [activeTab,      setActiveTab]      = useState('home');
+  const [selectedMarket, setSelectedMarket] = useState(null);
+  const [portfolio,      setPortfolio]      = useState([]);
 
   const handleMarketSelect = (market) => {
     setSelectedMarket(market);
@@ -35,7 +32,6 @@ function App() {
       ...prev,
       { id: Date.now(), ...betData, timestamp: new Date().toLocaleString(), status: 'active' },
     ]);
-    setWalletBalance(b => b - betData.amount);
     setAppState('main');
     setActiveTab('predict');
   };
@@ -52,20 +48,23 @@ function App() {
     }
   };
 
+  /* Show onboarding immediately — Privy init happens in background */
+  if (!authenticated) {
+    return <Onboarding privyReady={ready} />;
+  }
+
+  /* Logged in → Main app */
   return (
     <>
-      {appState !== 'onboarding' && <BackgroundFX />}
+      <BackgroundFX />
 
       <div className="app-container app-transparent">
-        {appState === 'onboarding' && (
-          <Onboarding onComplete={handleOnboardingComplete} />
-        )}
-
-        {appState === 'main' && user && (
+        {appState === 'main' && (
           <div className="main-app">
             <header className="top-bar glass-dark-bar">
               <div className="top-bar-left">
-                 <img src="/yellowceloseerbanner.png" alt="CeloSeer" className="topbar-wordmark" />
+                <img src="/reallogo.png"             alt=""         className="topbar-logo" />
+                <img src="/yellowceloseerbanner.png" alt="CeloSeer" className="topbar-wordmark" />
               </div>
               <div className="top-bar-center">
                 <span className="topbar-page-label">{TAB_LABELS[activeTab]}</span>
@@ -91,24 +90,26 @@ function App() {
           </div>
         )}
 
-        {appState === 'odds' && user && selectedMarket && (
+        {appState === 'odds' && selectedMarket && (
           <div className="page-slide-in">
             <OddsSlip
               market={selectedMarket}
-              user={user}
-              walletBalance={walletBalance}
+              walletAddress={walletAddress}
+              walletBalance={parseFloat(balance)}
               onSubmit={handleOddsSubmit}
               onBack={() => setAppState('main')}
             />
           </div>
         )}
 
-        {appState === 'profile' && user && (
+        {appState === 'profile' && (
           <div className="page-slide-in">
             <Profile
               user={user}
+              walletAddress={walletAddress}
+              displayAddress={displayAddress}
+              balance={balance}
               positions={portfolio}
-              walletBalance={walletBalance}
               onBack={() => setAppState('main')}
             />
           </div>

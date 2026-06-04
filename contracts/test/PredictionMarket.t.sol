@@ -186,4 +186,184 @@ contract PredictionMarketTest is Test {
         (uint256 stored,,) = pm.getBet(1, alice);
         assertEq(stored, amt);
     }
+
+    // ─── getOdds: empty and sparse pools ─────────────────────────────────────
+
+    function test_getOdds_emptyPool_returnsZero() public {
+        pm.createMarket("Empty?", CLOSE, false);
+        (uint256 y, uint256 n, uint256 d) = pm.getOdds(1);
+        assertEq(y, 0);
+        assertEq(n, 0);
+        assertEq(d, 0);
+    }
+
+    function test_getOdds_missingNoPool_returnsZeroNoOdds() public {
+        pm.createMarket("Only YES?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        (, uint256 noOdds, uint256 drawOdds) = pm.getOdds(1);
+        assertEq(noOdds,   0);
+        assertEq(drawOdds, 0);
+    }
+
+    function test_getOdds_missingYesPool_returnsZeroYesOdds() public {
+        pm.createMarket("Only NO?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.NO, TEN);
+        (uint256 yesOdds,,) = pm.getOdds(1);
+        assertEq(yesOdds, 0);
+    }
+
+    function test_getOdds_withDrawPool() public {
+        pm.createMarket("Draw?", CLOSE, true);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES,  TEN);
+        vm.prank(bob);   pm.placeBet(1, PredictionMarket.Outcome.NO,   TEN);
+        vm.prank(carol); pm.placeBet(1, PredictionMarket.Outcome.DRAW, TEN);
+        (, , uint256 drawOdds) = pm.getOdds(1);
+        // pool after fee = 30 * 0.98 = 29.4; drawPool = 10 → odds = 29.4/10 * 1e4 = 29400
+        assertApproxEqAbs(drawOdds, 29400, 5);
+    }
+
+    // ─── resolveMarket branches ───────────────────────────────────────────────
+
+    function test_resolveMarket_revertsDrawOnNonDrawMarket() public {
+        pm.createMarket("NoDraw?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        vm.expectRevert(PredictionMarket.DrawNotAvailable.selector);
+        pm.resolveMarket(1, PredictionMarket.Outcome.DRAW);
+    }
+
+    function test_resolveMarket_revertsIfAlreadyResolved() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        pm.resolveMarket(1, PredictionMarket.Outcome.YES);
+        vm.expectRevert(PredictionMarket.MarketNotOpen.selector);
+        pm.resolveMarket(1, PredictionMarket.Outcome.YES);
+    }
+
+    function test_resolveMarket_zeroFeeWhenNoBets() public {
+        pm.createMarket("EmptyResolve?", CLOSE, false);
+        // fee branch: totalPool == 0 → fee == 0, no transfer
+        uint256 ownerBefore = cusd.balanceOf(owner);
+        pm.resolveMarket(1, PredictionMarket.Outcome.YES);
+        assertEq(cusd.balanceOf(owner), ownerBefore);
+    }
+
+    // ─── draw market resolution + claim ──────────────────────────────────────
+
+    function test_resolve_drawMarket_claimsDraw() public {
+        pm.createMarket("DrawMatch?", CLOSE, true);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.DRAW, TEN);
+        vm.prank(bob);   pm.placeBet(1, PredictionMarket.Outcome.YES,  TEN);
+
+        pm.resolveMarket(1, PredictionMarket.Outcome.DRAW);
+
+        uint256 aliceBefore = cusd.balanceOf(alice);
+        vm.prank(alice); pm.claimWinnings(1);
+        assertGt(cusd.balanceOf(alice), aliceBefore);
+
+        // bob (YES) cannot claim DRAW result
+        vm.prank(bob);
+        vm.expectRevert(PredictionMarket.DidNotWin.selector);
+        pm.claimWinnings(1);
+    }
+
+    // ─── cancelMarket branches ────────────────────────────────────────────────
+
+    function test_cancelMarket_revertsIfAlreadyCancelled() public {
+        pm.createMarket("Test?", CLOSE, false);
+        pm.cancelMarket(1);
+        vm.expectRevert(PredictionMarket.MarketNotOpen.selector);
+        pm.cancelMarket(1);
+    }
+
+    function test_cancelMarket_revertsIfResolved() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        pm.resolveMarket(1, PredictionMarket.Outcome.YES);
+        vm.expectRevert(PredictionMarket.MarketNotOpen.selector);
+        pm.cancelMarket(1);
+    }
+
+    // ─── claimRefund branches ─────────────────────────────────────────────────
+
+    function test_claimRefund_revertsIfNotCancelled() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        vm.prank(alice);
+        vm.expectRevert(PredictionMarket.NotCancelled.selector);
+        pm.claimRefund(1);
+    }
+
+    function test_claimRefund_revertsIfNoBet() public {
+        pm.createMarket("Test?", CLOSE, false);
+        pm.cancelMarket(1);
+        vm.prank(alice);
+        vm.expectRevert(PredictionMarket.NoBet.selector);
+        pm.claimRefund(1);
+    }
+
+    function test_claimRefund_revertsDoubleClaim() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        pm.cancelMarket(1);
+        vm.prank(alice); pm.claimRefund(1);
+        vm.prank(alice);
+        vm.expectRevert(PredictionMarket.AlreadyClaimed.selector);
+        pm.claimRefund(1);
+    }
+
+    // ─── claimWinnings branches ───────────────────────────────────────────────
+
+    function test_claimWinnings_revertsIfNotResolved() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        vm.prank(alice);
+        vm.expectRevert(PredictionMarket.NotResolved.selector);
+        pm.claimWinnings(1);
+    }
+
+    function test_claimWinnings_revertsIfNoBet() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        pm.resolveMarket(1, PredictionMarket.Outcome.YES);
+        vm.prank(bob);
+        vm.expectRevert(PredictionMarket.NoBet.selector);
+        pm.claimWinnings(1);
+    }
+
+    // ─── placeBet on non-open market ─────────────────────────────────────────
+
+    function test_placeBet_revertsIfMarketResolved() public {
+        pm.createMarket("Test?", CLOSE, false);
+        vm.prank(alice); pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+        pm.resolveMarket(1, PredictionMarket.Outcome.YES);
+        vm.prank(bob);
+        vm.expectRevert(PredictionMarket.MarketNotOpen.selector);
+        pm.placeBet(1, PredictionMarket.Outcome.NO, TEN);
+    }
+
+    function test_placeBet_revertsIfMarketCancelled() public {
+        pm.createMarket("Test?", CLOSE, false);
+        pm.cancelMarket(1);
+        vm.prank(alice);
+        vm.expectRevert(PredictionMarket.MarketNotOpen.selector);
+        pm.placeBet(1, PredictionMarket.Outcome.YES, TEN);
+    }
+
+    // ─── non-existent market ─────────────────────────────────────────────────
+
+    function test_nonExistentMarket_revertsOnBet() public {
+        vm.prank(alice);
+        vm.expectRevert(PredictionMarket.MarketDoesNotExist.selector);
+        pm.placeBet(999, PredictionMarket.Outcome.YES, TEN);
+    }
+
+    function test_nonExistentMarket_revertsOnClaim() public {
+        vm.expectRevert(PredictionMarket.MarketDoesNotExist.selector);
+        vm.prank(alice); pm.claimWinnings(999);
+    }
+
+    function test_nonExistentMarket_revertsOnRefund() public {
+        vm.expectRevert(PredictionMarket.MarketDoesNotExist.selector);
+        vm.prank(alice); pm.claimRefund(999);
+    }
 }
