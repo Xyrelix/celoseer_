@@ -115,7 +115,7 @@ export default function Onboarding({ onComplete }) {
 
       {/* ── Wordmark — top-left corner ── */}
       <div className="ob-corner-logo">
-        <img src="/realceloseer.png" alt="CeloSeer" className="ob-corner-img" />
+        <img src="/yellowceloseerbanner.png" alt="CeloSeer" className="ob-corner-img" />
       </div>
 
       {/* ── Language picker — top-right ── */}

@@ -2475,16 +2475,20 @@ button:active::after { animation: ripple 0.5s ease-out; }
 }
 
 /* Group selector */
+.group-tabs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
 .group-tabs {
   display: flex;
   gap: 6px;
-  overflow-x: auto;
-  margin-bottom: 16px;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
 }
 
-.group-tabs::-webkit-scrollbar { display: none; }
+.group-tabs--row { width: 100%; }
+.group-tabs--row .group-tab { flex: 1; text-align: center; padding: 8px 0; }
 
 .group-tab {
   padding: 8px 14px;
@@ -2492,6 +2496,17 @@ button:active::after { animation: ripple 0.5s ease-out; }
   font-size: 0.85rem;
   font-weight: 700;
   flex-shrink: 0;
+}
+
+.group-tab--playoff {
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  letter-spacing: 0.3px;
+  font-size: 0.8rem;
+}
+.group-tab--playoff.active {
+  background: linear-gradient(135deg, rgba(245,158,11,0.85), rgba(239,68,68,0.85)) !important;
 }
 
 /* Standings card */
@@ -2585,6 +2600,40 @@ button:active::after { animation: ripple 0.5s ease-out; }
   margin-right: 5px;
   vertical-align: middle;
 }
+
+.st-row--elim { border-left: 3px solid #ef4444; }
+
+.st-legend--elim::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  background: #ef4444;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* 3rd-place playoff tab */
+.group-tab--playoff { letter-spacing: 0.3px; }
+.group-tab--playoff.active {
+  background: linear-gradient(135deg, rgba(245,158,11,0.85), rgba(239,68,68,0.85)) !important;
+}
+
+/* Playoff info note */
+.st-playoff-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  font-size: 0.67rem;
+  color: #f59e0b;
+  background: rgba(245,158,11,0.07);
+  border-bottom: 1px solid rgba(245,158,11,0.12);
+}
+
+/* TBD placeholder values */
+.st-tbd     { color: #4b5563; font-style: italic; }
+.st-tbd-val { color: #374151 !important; }
 
 /* Bracket teaser */
 .bracket-teaser {

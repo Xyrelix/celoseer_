@@ -12,7 +12,7 @@ const FEATURED = [
   { team: 'Argentina', flag: 'https://flagcdn.com/ar.svg', odds: '3.5x', confidence: 82, tag: 'FAVORITES' },
   { team: 'France',    flag: 'https://flagcdn.com/fr.svg', odds: '4.2x', confidence: 78, tag: 'STRONG' },
   { team: 'Brazil',    flag: 'https://flagcdn.com/br.svg', odds: '3.8x', confidence: 80, tag: 'FAVORITES' },
-  { team: 'England',   flag: 'https://flagcdn.com/gb.svg', odds: '4.8x', confidence: 75, tag: 'CONTENDER' },
+  { team: 'England',   flag: 'https://flagcdn.com/gb-eng.svg', odds: '4.8x', confidence: 75, tag: 'CONTENDER' },
 ];
 
 const FIXTURES = [
