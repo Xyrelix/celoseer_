@@ -1,4 +1,29 @@
+import { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
+
+/* Smooth count-up using requestAnimationFrame with ease-out cubic */
+function useCountUp(target, duration = 1600, decimals = 0) {
+  const [val, setVal] = useState(0);
+  const startRef = useRef(null);
+  const rafRef   = useRef(null);
+
+  useEffect(() => {
+    startRef.current = null;
+
+    const tick = (ts) => {
+      if (!startRef.current) startRef.current = ts;
+      const progress = Math.min((ts - startRef.current) / duration, 1);
+      const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setVal(parseFloat((eased * target).toFixed(decimals)));
+      if (progress < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, duration, decimals]);
+
+  return val;
+}
 
 const AI_CALLS = [
   { rank: 1, call: 'Argentina to Win World Cup', confidence: 82, trend: '+2.1%', flag: 'ar', tag: 'HIGH' },
@@ -27,6 +52,10 @@ const HOT_MARKETS = [
 const maxBar = Math.max(...TREND_BARS.map(b => b.val));
 
 export default function InsightsTab() {
+  const accuracy = useCountUp(82.4, 1800, 1);
+  const calls    = useCountUp(847,  1600, 0);
+  const teams    = useCountUp(32,   1200, 0);
+
   return (
     <div className="insights-tab">
       {/* Header */}
@@ -40,17 +69,17 @@ export default function InsightsTab() {
         </div>
         <div className="ih-stats">
           <div className="ih-stat">
-            <span className="ih-stat-val">82.4%</span>
+            <span className="ih-stat-val ih-stat-val--counting">{accuracy}%</span>
             <span className="ih-stat-label">Overall Accuracy</span>
           </div>
           <div className="ih-stat-div" />
           <div className="ih-stat">
-            <span className="ih-stat-val">847</span>
+            <span className="ih-stat-val ih-stat-val--counting">{calls}</span>
             <span className="ih-stat-label">Total Calls</span>
           </div>
           <div className="ih-stat-div" />
           <div className="ih-stat">
-            <span className="ih-stat-val">32</span>
+            <span className="ih-stat-val ih-stat-val--counting">{teams}</span>
             <span className="ih-stat-label">Teams Tracked</span>
           </div>
         </div>
