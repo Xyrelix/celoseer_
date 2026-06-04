@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import Icon from './Icon';
 
-const WC_IMAGES = ['/wc1.jpg', '/wc2.jpg', '/wc3.jpg', '/wc4.jpg'];
+const WC_IMAGES = [
+  { url: '/wc1.jpg',        type: 'image' },
+  { url: '/trim.mp4',       type: 'video' },
+  { url: '/wc2.jpg',        type: 'image' },
+  { url: '/rimm%202.mp4',   type: 'video' },
+  { url: '/wc3.jpg',        type: 'image' },
+  { url: '/wc4.jpg',        type: 'image' },
+];
 
 /* ── Typewriter texts ── */
 const TW_TEXTS = [
@@ -104,12 +111,23 @@ export default function Onboarding({ onComplete }) {
 
       {/* ── Carousel background ── */}
       <div className="ob-carousel">
-        {WC_IMAGES.map((src, i) => (
-          <div key={i}
-            className={`ob-slide ${i === imgIndex ? 'ob-slide--active' : ''} ${i === prevImgIndex ? 'ob-slide--prev' : ''}`}
-            style={{ backgroundImage: `url(${src})` }}
-          />
-        ))}
+        {WC_IMAGES.map((slide, i) => {
+          const cls = `ob-slide ${i === imgIndex ? 'ob-slide--active' : ''} ${i === prevImgIndex ? 'ob-slide--prev' : ''}`;
+          return slide.type === 'video' ? (
+            <div key={i} className={cls}>
+              <video
+                className="ob-slide-video"
+                src={slide.url}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            </div>
+          ) : (
+            <div key={i} className={cls} style={{ backgroundImage: `url(${slide.url})` }} />
+          );
+        })}
         <div className="ob-overlay" />
       </div>
 
