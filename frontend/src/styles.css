@@ -1253,11 +1253,15 @@ button:active::after { animation: ripple 0.5s ease-out; }
   scrollbar-width: thin;
   scrollbar-color: rgba(255,215,0,0.3) transparent;
   padding: 6px;
-  min-width: 128px;
+  min-width: 160px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   animation: slideDown 0.2s ease;
   z-index: 40;
 }
+
+.ob-lang-menu::-webkit-scrollbar { width: 4px; }
+.ob-lang-menu::-webkit-scrollbar-track { background: transparent; }
+.ob-lang-menu::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 2px; }
 
 .ob-lang-opt {
   display: flex;
