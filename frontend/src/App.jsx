@@ -65,7 +65,6 @@ function App() {
           <div className="main-app">
             <header className="top-bar glass-dark-bar">
               <div className="top-bar-left">
-                <img src="/reallogo.png"     alt=""         className="topbar-logo" />
                 <img src="/realceloseer.png" alt="CeloSeer" className="topbar-wordmark" />
               </div>
               <div className="top-bar-center">
