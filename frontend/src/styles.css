@@ -1242,11 +1242,16 @@ button:active::after { animation: ripple 0.5s ease-out; }
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: rgba(8, 8, 18, 0.88);
+  background: rgba(8, 8, 18, 0.92);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(255, 215, 0, 0.15);
   border-radius: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,215,0,0.3) transparent;
   padding: 6px;
   min-width: 128px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
