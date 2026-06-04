@@ -2327,9 +2327,11 @@ button:active::after {
 .ob-corner-logo {
   position: fixed;
   top: 16px;
-  left: -9px;
+  left: -19px;
   z-index: 30;
   width: clamp(130px, 40vw, 172px);
+  display: flex;
+  align-items: center;
   animation: fadeIn 0.7s ease-out both;
 }
 
