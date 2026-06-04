@@ -2379,21 +2379,22 @@ button:active::after {
    ONBOARDING V2 — CORNER LOGO + TYPEWRITER + FEATURES
    ============================================ */
 
-/* Corner wordmark — top-left */
+/* Corner wordmark — top-left, ~40% of app width */
 .ob-corner-logo {
   position: fixed;
-  top: 18px;
+  top: 16px;
   left: 16px;
   z-index: 30;
-  animation: fadeIn 0.6s ease-out both;
+  width: clamp(130px, 40vw, 172px);
+  animation: fadeIn 0.7s ease-out both;
 }
 
 .ob-corner-img {
-  height: 22px;
-  width: auto;
+  width: 100%;
+  height: auto;
   display: block;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-  opacity: 0.9;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6)) brightness(1.05);
+  opacity: 0.95;
 }
 
 /* Slim hero — small ring + typewriter */
