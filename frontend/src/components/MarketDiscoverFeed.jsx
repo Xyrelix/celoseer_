@@ -53,6 +53,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         </div>
       </div>
 
+      {/* ── Search ──────────────────────────────── */}
       <div className="search-bar">
         <input
           type="text"
@@ -64,6 +65,7 @@ export default function MarketDiscoverFeed({ onSelectMarket, user, walletBalance
         <span className="search-icon">🔍</span>
       </div>
 
+      {/* ── Category tabs ───────────────────────── */}
       <div className="category-tabs">
         {categories.map(cat => (
           <button
