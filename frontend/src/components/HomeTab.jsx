@@ -20,7 +20,7 @@ const FIXTURES = [
   { date: 'Jun 12', time: '21:00', team1: 'Argentina', f1: 'ar', team2: 'Iceland',  f2: 'is', venue: 'MetLife, New Jersey' },
   { date: 'Jun 13', time: '18:00', team1: 'France',    f1: 'fr', team2: 'Ecuador',  f2: 'ec', venue: 'AT&T, Dallas' },
   { date: 'Jun 14', time: '21:00', team1: 'Brazil',    f1: 'br', team2: 'Croatia',  f2: 'hr', venue: 'Allegiant, Las Vegas' },
-  { date: 'Jun 15', time: '18:00', team1: 'England',   f1: 'gb', team2: 'Senegal',  f2: 'sn', venue: 'Rose Bowl, LA' },
+  { date: 'Jun 15', time: '18:00', team1: 'England',   f1: 'gb-eng', team2: 'Senegal',  f2: 'sn', venue: 'Rose Bowl, LA' },
   { date: 'Jun 16', time: '21:00', team1: 'Germany',   f1: 'de', team2: 'Portugal', f2: 'pt', venue: "Levi's, San Francisco" },
 ];
 
