@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import Icon from './Icon';
 
-const WC_IMAGES = ['/wc1.jpg', '/wc2.jpg', '/wc3.jpg', '/wc4.jpg'];
+const WC_IMAGES = [
+  { url: '/wc1.jpg',        type: 'image' },
+  { url: '/trim.mp4',       type: 'video' },
+  { url: '/wc2.jpg',        type: 'image' },
+  { url: '/rimm%202.mp4',   type: 'video' },
+  { url: '/wc3.jpg',        type: 'image' },
+  { url: '/wc4.jpg',        type: 'image' },
+];
 
 /* ── Typewriter texts ── */
 const TW_TEXTS = [
@@ -22,14 +29,24 @@ const FEATURES = [
 
 /* ── Language map ── */
 const LANGUAGES = {
-  en: { flag: '🇬🇧', name: 'EN', copy: 'Begin your CeloSeer journey with a gasless smart wallet.', continue: 'Get Started', preparing: 'Preparing...', getStarted: 'Enter CeloSeer', settingUp: 'Setting up...', back: 'Back', creatingWallet: 'Your Wallet Is Ready', walletDesc: 'Account abstraction wallet created — gasless transactions enabled.', walletGenerated: 'Wallet generated', network: 'Celo Mainnet', gas: 'Gas sponsored (free)' },
-  es: { flag: '🇪🇸', name: 'ES', copy: 'Comienza tu viaje en CeloSeer con una billetera sin gas.', continue: 'Comenzar', preparing: 'Preparando...', getStarted: 'Entrar a CeloSeer', settingUp: 'Configurando...', back: 'Atrás', creatingWallet: 'Tu Billetera Está Lista', walletDesc: 'Billetera creada — transacciones sin gas habilitadas.', walletGenerated: 'Billetera generada', network: 'Celo Mainnet', gas: 'Gas patrocinado (gratis)' },
-  fr: { flag: '🇫🇷', name: 'FR', copy: 'Commencez votre parcours CeloSeer avec un portefeuille sans gaz.', continue: 'Commencer', preparing: 'Préparation...', getStarted: 'Entrer dans CeloSeer', settingUp: 'Configuration...', back: 'Retour', creatingWallet: 'Votre Portefeuille Est Prêt', walletDesc: 'Portefeuille créé — transactions sans gaz activées.', walletGenerated: 'Portefeuille généré', network: 'Celo Mainnet', gas: 'Gaz sponsorisé (gratuit)' },
-  pt: { flag: '🇧🇷', name: 'PT', copy: 'Comece sua jornada CeloSeer com uma carteira sem gás.', continue: 'Começar', preparing: 'Preparando...', getStarted: 'Entrar no CeloSeer', settingUp: 'Configurando...', back: 'Voltar', creatingWallet: 'Sua Carteira Está Pronta', walletDesc: 'Carteira criada — transações sem gás habilitadas.', walletGenerated: 'Carteira gerada', network: 'Celo Mainnet', gas: 'Gas patrocinado (grátis)' },
-  de: { flag: '🇩🇪', name: 'DE', copy: 'Beginne deine CeloSeer-Reise mit einem gaslosen Wallet.', continue: 'Loslegen', preparing: 'Vorbereitung...', getStarted: 'CeloSeer betreten', settingUp: 'Einrichten...', back: 'Zurück', creatingWallet: 'Dein Wallet Ist Bereit', walletDesc: 'Wallet erstellt — gaslose Transaktionen aktiviert.', walletGenerated: 'Wallet erstellt', network: 'Celo Mainnet', gas: 'Gas gesponsert (kostenlos)' },
-  ar: { flag: '🇸🇦', name: 'AR', copy: 'ابدأ رحلتك مع CeloSeer بمحفظة ذكية بدون رسوم.', continue: 'ابدأ', preparing: '...جاري التحضير', getStarted: 'ادخل إلى CeloSeer', settingUp: '...جاري الإعداد', back: 'رجوع', creatingWallet: 'محفظتك جاهزة', walletDesc: 'تم إنشاء المحفظة — المعاملات بدون رسوم مفعّلة.', walletGenerated: 'تم إنشاء المحفظة', network: 'Celo Mainnet', gas: 'الغاز مدعوم (مجاني)' },
+  en: { flag: '🇬🇧', name: 'English',    rtl: false, copy: 'Begin your CeloSeer journey with a gasless smart wallet.',             continue: 'Get Started',  preparing: 'Preparing...',       getStarted: 'Enter CeloSeer',       settingUp: 'Setting up...',    back: 'Back',      creatingWallet: 'Your Wallet Is Ready',        walletDesc: 'Account abstraction wallet created — gasless transactions enabled.',  walletGenerated: 'Wallet generated',       network: 'Celo Mainnet', gas: 'Gas sponsored (free)' },
+  es: { flag: '🇪🇸', name: 'Español',    rtl: false, copy: 'Comienza tu viaje en CeloSeer con una billetera sin gas.',             continue: 'Comenzar',     preparing: 'Preparando...',      getStarted: 'Entrar a CeloSeer',    settingUp: 'Configurando...',  back: 'Atrás',     creatingWallet: 'Tu Billetera Está Lista',     walletDesc: 'Billetera creada — transacciones sin gas habilitadas.',               walletGenerated: 'Billetera generada',      network: 'Celo Mainnet', gas: 'Gas patrocinado (gratis)' },
+  fr: { flag: '🇫🇷', name: 'Français',   rtl: false, copy: 'Commencez votre parcours CeloSeer avec un portefeuille sans gaz.',     continue: 'Commencer',    preparing: 'Préparation...',     getStarted: 'Entrer dans CeloSeer', settingUp: 'Configuration...', back: 'Retour',    creatingWallet: 'Votre Portefeuille Est Prêt', walletDesc: 'Portefeuille créé — transactions sans gaz activées.',                 walletGenerated: 'Portefeuille généré',     network: 'Celo Mainnet', gas: 'Gaz sponsorisé (gratuit)' },
+  pt: { flag: '🇧🇷', name: 'Português',  rtl: false, copy: 'Comece sua jornada CeloSeer com uma carteira sem gás.',               continue: 'Começar',      preparing: 'Preparando...',      getStarted: 'Entrar no CeloSeer',   settingUp: 'Configurando...',  back: 'Voltar',    creatingWallet: 'Sua Carteira Está Pronta',    walletDesc: 'Carteira criada — transações sem gás habilitadas.',                   walletGenerated: 'Carteira gerada',         network: 'Celo Mainnet', gas: 'Gas patrocinado (grátis)' },
+  de: { flag: '🇩🇪', name: 'Deutsch',    rtl: false, copy: 'Beginne deine CeloSeer-Reise mit einem gaslosen Wallet.',             continue: 'Loslegen',     preparing: 'Vorbereitung...',    getStarted: 'CeloSeer betreten',    settingUp: 'Einrichten...',    back: 'Zurück',    creatingWallet: 'Dein Wallet Ist Bereit',      walletDesc: 'Wallet erstellt — gaslose Transaktionen aktiviert.',                  walletGenerated: 'Wallet erstellt',         network: 'Celo Mainnet', gas: 'Gas gesponsert (kostenlos)' },
+  ar: { flag: '🇸🇦', name: 'العربية',    rtl: true,  copy: 'ابدأ رحلتك مع CeloSeer بمحفظة ذكية بدون رسوم.',                    continue: 'ابدأ',         preparing: '...جاري',            getStarted: 'ادخل إلى CeloSeer',   settingUp: '...جاري الإعداد',  back: 'رجوع',      creatingWallet: 'محفظتك جاهزة',               walletDesc: 'تم إنشاء المحفظة — المعاملات بدون رسوم مفعّلة.',                    walletGenerated: 'تم إنشاء المحفظة',        network: 'Celo Mainnet', gas: 'الغاز مدعوم (مجاني)' },
+  it: { flag: '🇮🇹', name: 'Italiano',   rtl: false, copy: 'Inizia il tuo viaggio su CeloSeer con un portafoglio smart senza gas.', continue: 'Inizia',       preparing: 'Preparazione...',    getStarted: 'Entra in CeloSeer',    settingUp: 'Configurazione...', back: 'Indietro', creatingWallet: 'Il Tuo Portafoglio È Pronto', walletDesc: 'Portafoglio creato — transazioni senza gas abilitate.',               walletGenerated: 'Portafoglio generato',    network: 'Celo Mainnet', gas: 'Gas sponsorizzato (gratuito)' },
+  zh: { flag: '🇨🇳', name: '中文',        rtl: false, copy: '使用无Gas智能钱包开始您的CeloSeer之旅。',                             continue: '开始',         preparing: '准备中...',           getStarted: '进入CeloSeer',         settingUp: '设置中...',        back: '返回',      creatingWallet: '您的钱包已就绪',               walletDesc: '钱包已创建 — 无Gas交易已启用。',                                      walletGenerated: '钱包已生成',              network: 'Celo主网',     gas: 'Gas已赞助（免费）' },
+  ja: { flag: '🇯🇵', name: '日本語',      rtl: false, copy: 'ガスレス スマートウォレットでCeloSeerを始めましょう。',               continue: '始める',       preparing: '準備中...',           getStarted: 'CeloSeerへ',           settingUp: '設定中...',        back: '戻る',      creatingWallet: 'ウォレットの準備完了',          walletDesc: 'ウォレットが作成されました — ガスレス取引が有効です。',                walletGenerated: 'ウォレット生成完了',       network: 'Celoメインネット', gas: 'ガス後援済み（無料）' },
+  ko: { flag: '🇰🇷', name: '한국어',      rtl: false, copy: '가스 없는 스마트 지갑으로 CeloSeer 여정을 시작하세요.',              continue: '시작하기',      preparing: '준비 중...',          getStarted: 'CeloSeer 입장',        settingUp: '설정 중...',       back: '뒤로',      creatingWallet: '지갑이 준비되었습니다',         walletDesc: '지갑이 생성되었습니다 — 가스 없는 거래가 활성화되었습니다.',           walletGenerated: '지갑 생성됨',             network: 'Celo 메인넷', gas: '가스 후원됨 (무료)' },
+  nl: { flag: '🇳🇱', name: 'Nederlands', rtl: false, copy: 'Begin je CeloSeer-reis met een gasloze smart wallet.',               continue: 'Beginnen',     preparing: 'Voorbereiden...',    getStarted: 'CeloSeer betreden',    settingUp: 'Instellen...',     back: 'Terug',     creatingWallet: 'Jouw Wallet Is Klaar',        walletDesc: 'Wallet aangemaakt — transacties zonder gas ingeschakeld.',            walletGenerated: 'Wallet gegenereerd',      network: 'Celo Mainnet', gas: 'Gas gesponsord (gratis)' },
+  tr: { flag: '🇹🇷', name: 'Türkçe',     rtl: false, copy: 'Gassız akıllı cüzdanla CeloSeer yolculuğuna başla.',               continue: 'Başla',        preparing: 'Hazırlanıyor...',    getStarted: "CeloSeer'e Gir",       settingUp: 'Ayarlanıyor...',   back: 'Geri',      creatingWallet: 'Cüzdanın Hazır',              walletDesc: 'Cüzdan oluşturuldu — gassız işlemler etkinleştirildi.',              walletGenerated: 'Cüzdan oluşturuldu',      network: 'Celo Mainnet', gas: 'Gas desteklendi (ücretsiz)' },
+  pl: { flag: '🇵🇱', name: 'Polski',     rtl: false, copy: 'Rozpocznij swoją podróż z CeloSeer z portfelem bez gazu.',           continue: 'Rozpocznij',   preparing: 'Przygotowywanie...', getStarted: 'Wejdź do CeloSeer',    settingUp: 'Konfigurowanie...', back: 'Wróć',     creatingWallet: 'Twój Portfel Jest Gotowy',    walletDesc: 'Portfel utworzony — transakcje bez gazu włączone.',                   walletGenerated: 'Portfel wygenerowany',    network: 'Celo Mainnet', gas: 'Gaz sponsorowany (bezpłatny)' },
+  ru: { flag: '🇷🇺', name: 'Русский',    rtl: false, copy: 'Начните путешествие с CeloSeer с безгазовым кошельком.',             continue: 'Начать',       preparing: 'Подготовка...',      getStarted: 'Войти в CeloSeer',     settingUp: 'Настройка...',     back: 'Назад',     creatingWallet: 'Ваш Кошелёк Готов',           walletDesc: 'Кошелёк создан — безгазовые транзакции активированы.',               walletGenerated: 'Кошелёк создан',          network: 'Celo Mainnet', gas: 'Газ спонсирован (бесплатно)' },
+  hi: { flag: '🇮🇳', name: 'हिन्दी',     rtl: false, copy: 'गैसलेस स्मार्ट वॉलेट के साथ CeloSeer यात्रा शुरू करें।',          continue: 'शुरू करें',    preparing: 'तैयारी हो रही है...', getStarted: 'CeloSeer में प्रवेश करें', settingUp: 'सेटअप हो रहा है...', back: 'वापस', creatingWallet: 'आपका वॉलेट तैयार है', walletDesc: 'वॉलेट बनाया गया — गैसलेस लेनदेन सक्षम।', walletGenerated: 'वॉलेट उत्पन्न', network: 'Celo Mainnet', gas: 'गैस प्रायोजित (निःशुल्क)' },
+  sw: { flag: '🇰🇪', name: 'Kiswahili',  rtl: false, copy: 'Anza safari yako ya CeloSeer na pochi ya smart bila gesi.',         continue: 'Anza',         preparing: 'Inaandaa...',        getStarted: 'Ingia CeloSeer',       settingUp: 'Inasanidi...',     back: 'Rudi',      creatingWallet: 'Pochi Yako Iko Tayari',        walletDesc: 'Pochi imeundwa — miamala bila gesi imewezeshwa.',                     walletGenerated: 'Pochi imeundwa',          network: 'Celo Mainnet', gas: 'Gesi inafadhiliwa (bure)' },
 };
-const LANG_KEYS = ['en', 'es', 'fr', 'pt', 'de', 'ar'];
+const LANG_KEYS = ['en', 'es', 'fr', 'pt', 'de', 'ar', 'it', 'zh', 'ja', 'ko', 'nl', 'tr', 'pl', 'ru', 'hi', 'sw'];
 
 /* ────────────────────────────────────────── */
 
@@ -100,16 +117,27 @@ export default function Onboarding({ onComplete }) {
   const goToSlide = (i) => { setPrevImgIndex(imgIndex); setImgIndex(i); };
 
   return (
-    <div className="ob-root" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="ob-root" dir={t.rtl ? 'rtl' : 'ltr'}>
 
       {/* ── Carousel background ── */}
       <div className="ob-carousel">
-        {WC_IMAGES.map((src, i) => (
-          <div key={i}
-            className={`ob-slide ${i === imgIndex ? 'ob-slide--active' : ''} ${i === prevImgIndex ? 'ob-slide--prev' : ''}`}
-            style={{ backgroundImage: `url(${src})` }}
-          />
-        ))}
+        {WC_IMAGES.map((slide, i) => {
+          const cls = `ob-slide ${i === imgIndex ? 'ob-slide--active' : ''} ${i === prevImgIndex ? 'ob-slide--prev' : ''}`;
+          return slide.type === 'video' ? (
+            <div key={i} className={cls}>
+              <video
+                className="ob-slide-video"
+                src={slide.url}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            </div>
+          ) : (
+            <div key={i} className={cls} style={{ backgroundImage: `url(${slide.url})` }} />
+          );
+        })}
         <div className="ob-overlay" />
       </div>
 

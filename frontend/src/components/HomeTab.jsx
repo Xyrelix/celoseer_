@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
 
 const WC_SLIDES = [
-  { url: '/wc1.jpg', caption: 'FIFA World Cup 2026',     sub: 'Estadio AKRON — Guadalajara, Mexico' },
-  { url: '/wc2.jpg', caption: 'The Stage Is Set',        sub: 'An Unforgettable Opening Ceremony' },
-  { url: '/wc3.jpg', caption: 'Where Legends Are Born', sub: 'The Greatest Tournament on Earth' },
-  { url: '/wc4.jpg', caption: '17 Straight Days',       sub: 'Group Stage · June 11 – June 27, 2026' },
+  { url: '/wc1.jpg',         type: 'image', caption: 'FIFA World Cup 2026',     sub: 'Estadio AKRON — Guadalajara, Mexico' },
+  { url: '/trim.mp4',        type: 'video', caption: 'The Greatest Show',        sub: 'FIFA World Cup 2026 · The Spectacle Begins' },
+  { url: '/wc2.jpg',         type: 'image', caption: 'The Stage Is Set',         sub: 'An Unforgettable Opening Ceremony' },
+  { url: '/rimm%202.mp4',    type: 'video', caption: 'World Cup Moments',        sub: 'Where Legends Are Born' },
+  { url: '/wc3.jpg',         type: 'image', caption: 'The Greatest Tournament',  sub: 'The Greatest Show on Earth' },
+  { url: '/wc4.jpg',         type: 'image', caption: '17 Straight Days',         sub: 'Group Stage · June 11 – June 27, 2026' },
 ];
 
 const FEATURED = [
@@ -20,7 +22,7 @@ const FIXTURES = [
   { date: 'Jun 12', time: '21:00', team1: 'Argentina', f1: 'ar', team2: 'Iceland',  f2: 'is', venue: 'MetLife, New Jersey' },
   { date: 'Jun 13', time: '18:00', team1: 'France',    f1: 'fr', team2: 'Ecuador',  f2: 'ec', venue: 'AT&T, Dallas' },
   { date: 'Jun 14', time: '21:00', team1: 'Brazil',    f1: 'br', team2: 'Croatia',  f2: 'hr', venue: 'Allegiant, Las Vegas' },
-  { date: 'Jun 15', time: '18:00', team1: 'England',   f1: 'gb', team2: 'Senegal',  f2: 'sn', venue: 'Rose Bowl, LA' },
+  { date: 'Jun 15', time: '18:00', team1: 'England',   f1: 'gb-eng', team2: 'Senegal',  f2: 'sn', venue: 'Rose Bowl, LA' },
   { date: 'Jun 16', time: '21:00', team1: 'Germany',   f1: 'de', team2: 'Portugal', f2: 'pt', venue: "Levi's, San Francisco" },
 ];
 
@@ -72,11 +74,22 @@ export default function HomeTab({ onSelectMarket }) {
           style={{ transform: `translateX(-${slideIdx * 100}%)` }}
         >
           {WC_SLIDES.map((slide, i) => (
-            <div
-              key={i}
-              className="home-slide"
-              style={{ backgroundImage: `url(${slide.url})` }}
-            >
+            <div key={i} className="home-slide">
+              {slide.type === 'video' ? (
+                <video
+                  className="slide-media"
+                  src={slide.url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : (
+                <div
+                  className="slide-media slide-media--img"
+                  style={{ backgroundImage: `url(${slide.url})` }}
+                />
+              )}
               <div className="home-slide-overlay" />
               <div className="home-slide-caption">
                 <span className="slide-badge">
