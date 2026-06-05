@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Icon from './Icon';
-import { usePlaceBetOnChain } from '../hooks/useContract';
+import { usePlaceBetOnChain, useDisplayOdds } from '../hooks/useContract';
 
 const STAGE_LABEL = {
   idle:      'Confirm Wager',
@@ -17,8 +17,14 @@ export default function OddsSlip({ market, walletAddress, walletBalance, onSubmi
 
   const { placeBet, stage, error, reset, isContractReady } = usePlaceBetOnChain();
 
+  // Live on-chain odds (falls back to AI odds when pools are empty).
+  const live = useDisplayOdds(market);
+  const yesOdds = live.yes ?? market.yesOdds;
+  const noOdds  = live.no  ?? market.noOdds;
+
   const betAmount      = parseFloat(amount) || 0;
-  const selectedOdds   = prediction === 'yes' ? market.yesOdds : market.noOdds;
+  const selectedOdds   = prediction === 'yes' ? yesOdds : noOdds;
+  const selectedIsLive = prediction === 'yes' ? live.liveYes : live.liveNo;
   const potentialPayout  = betAmount > 0 ? (betAmount * selectedOdds).toFixed(2) : 0;
   const potentialProfit  = betAmount > 0 ? (potentialPayout - betAmount).toFixed(2) : 0;
   const adjustedOdds   = selectedOdds * (1 - slippage / 100);
@@ -77,16 +83,23 @@ export default function OddsSlip({ market, walletAddress, walletBalance, onSubmi
       )}
 
       <div className="prediction-selector">
-        <p className="selector-label">What do you predict?</p>
+        <p className="selector-label">
+          What do you predict?
+          {live.isLive && <span className="live-odds-pill"><span className="live-dot" />LIVE ODDS</span>}
+        </p>
         <button className={`prediction-btn yes ${prediction === 'yes' ? 'selected' : ''}`} onClick={() => setPrediction('yes')}>
           <Icon name="check" size={20} className="prediction-icon" />
           <span className="prediction-text">YES</span>
-          <span className="prediction-odds">{market.yesOdds.toFixed(2)}x</span>
+          <span className="prediction-odds">
+            {yesOdds.toFixed(2)}x{live.liveYes && <span className="live-dot" />}
+          </span>
         </button>
         <button className={`prediction-btn no ${prediction === 'no' ? 'selected' : ''}`} onClick={() => setPrediction('no')}>
           <Icon name="close" size={20} className="prediction-icon" />
           <span className="prediction-text">NO</span>
-          <span className="prediction-odds">{market.noOdds.toFixed(2)}x</span>
+          <span className="prediction-odds">
+            {noOdds.toFixed(2)}x{live.liveNo && <span className="live-dot" />}
+          </span>
         </button>
       </div>
 
@@ -121,7 +134,9 @@ export default function OddsSlip({ market, walletAddress, walletBalance, onSubmi
             <span className="calc-value">{betAmount.toFixed(2)} cUSD</span>
           </div>
           <div className="calc-item">
-            <span className="calc-label">Odds (with {slippage}% slippage)</span>
+            <span className="calc-label">
+              {selectedIsLive ? 'Live odds' : 'AI odds'} (with {slippage}% slippage)
+            </span>
             <span className="calc-value highlight">{adjustedOdds.toFixed(2)}x</span>
           </div>
           <div className="divider" />

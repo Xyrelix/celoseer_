@@ -1,5 +1,28 @@
 import { useState } from 'react';
 import Icon from './Icon';
+import { useDisplayOdds } from '../hooks/useContract';
+
+// Per-card odds row — reads live on-chain odds, falls back to AI odds.
+function LiveOddsRow({ market }) {
+  const live = useDisplayOdds(market);
+  return (
+    <div className="odds-row">
+      <div className="odds-item yes">
+        <span className="odds-label">YES</span>
+        <span className="odds-value">
+          {live.yes.toFixed(2)}{live.liveYes && <span className="live-dot" />}
+        </span>
+      </div>
+      <div className="divider-vertical" />
+      <div className="odds-item no">
+        <span className="odds-label">NO</span>
+        <span className="odds-value">
+          {live.no.toFixed(2)}{live.liveNo && <span className="live-dot" />}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 const mockMarkets = [
   { id: 1, title: 'Argentina to Win World Cup 2026?', category: 'knockout', team: 'Argentina', yesOdds: 3.5, noOdds: 1.35, sentiment: 68, volume: 125430, image: 'https://flagcdn.com/ar.svg', confidence: 82, prediction: 'FAVORITES' },
@@ -111,17 +134,7 @@ export default function PredictTab({ onSelectMarket }) {
               </div>
             </div>
 
-            <div className="odds-row">
-              <div className="odds-item yes">
-                <span className="odds-label">YES</span>
-                <span className="odds-value">{market.yesOdds.toFixed(2)}</span>
-              </div>
-              <div className="divider-vertical" />
-              <div className="odds-item no">
-                <span className="odds-label">NO</span>
-                <span className="odds-value">{market.noOdds.toFixed(2)}</span>
-              </div>
-            </div>
+            <LiveOddsRow market={market} />
 
             <div className="card-bottom">
               <div className="card-stats">

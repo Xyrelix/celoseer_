@@ -15,7 +15,7 @@ import './styles.css';
 
 function App() {
   const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
-  const { balance } = useWalletBalance(walletAddress);
+  const { balance, refetch: refetchBalance } = useWalletBalance(walletAddress);
 
   const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile'
   const [activeTab,      setActiveTab]      = useState('home');
@@ -32,6 +32,8 @@ function App() {
       ...prev,
       { id: Date.now(), ...betData, timestamp: new Date().toLocaleString(), status: 'active' },
     ]);
+    // bet just spent cUSD on-chain — pull the fresh balance
+    refetchBalance?.();
     setAppState('main');
     setActiveTab('predict');
   };

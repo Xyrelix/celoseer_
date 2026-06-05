@@ -2,6 +2,7 @@ import { useWriteContract, useReadContract } from 'wagmi';
 import { parseEther, erc20Abi } from 'viem';
 import { useState } from 'react';
 import deployment from '../contracts/deployment.js';
+import { ACTIVE_CHAIN } from '../config/wagmi';
 
 export const CONTRACT_ADDRESS = deployment.address;
 export const CUSD_ADDRESS     = deployment.cUSD;
@@ -66,20 +67,52 @@ export function usePlaceBetOnChain() {
 
 export function useOnChainOdds(backendMarketId) {
   const contractMarketId = MARKET_MAPPINGS[backendMarketId];
+  const enabled = !!CONTRACT_ADDRESS && !!contractMarketId;
 
-  const { data } = useReadContract({
+  const { data, isLoading, refetch } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getOdds',
     args: contractMarketId ? [BigInt(contractMarketId)] : undefined,
-    query: { enabled: !!CONTRACT_ADDRESS && !!contractMarketId },
+    chainId: ACTIVE_CHAIN.id,
+    query: {
+      enabled,
+      // odds shift as pools fill — keep them reasonably fresh
+      refetchInterval: 15_000,
+    },
   });
 
-  if (!data) return null;
-  const [yesRaw, noRaw, drawRaw] = data;
+  const odds = data
+    ? {
+        yes:  data[0] > 0n ? Number(data[0]) / 10000 : null,
+        no:   data[1] > 0n ? Number(data[1]) / 10000 : null,
+        draw: data[2] > 0n ? Number(data[2]) / 10000 : null,
+      }
+    : null;
+
+  return { odds, isLoading, refetch, enabled };
+}
+
+// ─── Merge on-chain odds with the AI/fallback odds carried on the market ──────
+// Returns display-ready odds plus an `isLive` flag per outcome so the UI can
+// badge values that actually come from the contract's live pools.
+
+export function useDisplayOdds(market) {
+  const { odds, isLoading } = useOnChainOdds(market?.id);
+
+  const yes  = odds?.yes  ?? market?.yesOdds  ?? null;
+  const no   = odds?.no   ?? market?.noOdds   ?? null;
+  const draw = odds?.draw ?? market?.drawOdds ?? null;
+
   return {
-    yes:  yesRaw  > 0n ? Number(yesRaw)  / 10000 : null,
-    no:   noRaw   > 0n ? Number(noRaw)   / 10000 : null,
-    draw: drawRaw > 0n ? Number(drawRaw) / 10000 : null,
+    yes,
+    no,
+    draw,
+    // a value is "live" only when it came from a non-empty on-chain pool
+    liveYes:  odds?.yes  != null,
+    liveNo:   odds?.no   != null,
+    liveDraw: odds?.draw != null,
+    isLive:   odds?.yes != null || odds?.no != null,
+    isLoading,
   };
 }
