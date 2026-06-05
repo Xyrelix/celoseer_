@@ -65,8 +65,7 @@ function App() {
           <div className="main-app">
             <header className="top-bar glass-dark-bar">
               <div className="top-bar-left">
-                <img src="/reallogo.png"             alt=""         className="topbar-logo" />
-                <img src="/yellowceloseerbanner.png" alt="CeloSeer" className="topbar-wordmark" />
+                 <img src="/yellowceloseerbanner.png" alt="CeloSeer" className="topbar-wordmark" />
               </div>
               <div className="top-bar-center">
                 <span className="topbar-page-label">{TAB_LABELS[activeTab]}</span>
