@@ -1,5 +1,7 @@
 const deployment = {
-  address: import.meta.env.VITE_CONTRACT_ADDRESS ?? null,
+  // Hardcoded fallback so the app works even when VITE_CONTRACT_ADDRESS isn't
+  // set in the deploy env (e.g. Vercel). Override via .env to point elsewhere.
+  address: import.meta.env.VITE_CONTRACT_ADDRESS ?? '0x91F8763B119CA7EC990ECCD0Db6A19ca13cAfDDa',
   cUSD:    import.meta.env.VITE_CUSD_ADDRESS    ?? '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
   chainId: 11142220, // Celo Sepolia
   /* Maps frontend market ID → on-chain market ID (uint256).
