@@ -18,12 +18,12 @@ const FEATURED = [
 ];
 
 const FIXTURES = [
-  { date: 'Jun 11', time: '18:00', team1: 'Mexico',    f1: 'mx', team2: 'Poland',   f2: 'pl', venue: 'Azteca, Mexico City' },
-  { date: 'Jun 12', time: '21:00', team1: 'Argentina', f1: 'ar', team2: 'Iceland',  f2: 'is', venue: 'MetLife, New Jersey' },
-  { date: 'Jun 13', time: '18:00', team1: 'France',    f1: 'fr', team2: 'Ecuador',  f2: 'ec', venue: 'AT&T, Dallas' },
-  { date: 'Jun 14', time: '21:00', team1: 'Brazil',    f1: 'br', team2: 'Croatia',  f2: 'hr', venue: 'Allegiant, Las Vegas' },
-  { date: 'Jun 15', time: '18:00', team1: 'England',   f1: 'gb-eng', team2: 'Senegal',  f2: 'sn', venue: 'Rose Bowl, LA' },
-  { date: 'Jun 16', time: '21:00', team1: 'Germany',   f1: 'de', team2: 'Portugal', f2: 'pt', venue: "Levi's, San Francisco" },
+  { date: 'Jun 11', time: '15:00', team1: 'Mexico',      f1: 'mx',     team2: 'South Africa', f2: 'za',     venue: 'Estadio Azteca, Mexico City' },
+  { date: 'Jun 11', time: '22:00', team1: 'South Korea', f1: 'kr',     team2: 'Czechia',      f2: 'cz',     venue: 'Estadio Akron, Guadalajara' },
+  { date: 'Jun 12', time: '15:00', team1: 'Canada',      f1: 'ca',     team2: 'Bosnia & Herz.', f2: 'ba',   venue: 'BMO Field, Toronto' },
+  { date: 'Jun 12', time: '21:00', team1: 'USA',         f1: 'us',     team2: 'Paraguay',     f2: 'py',     venue: 'SoFi Stadium, Los Angeles' },
+  { date: 'Jun 13', time: '18:00', team1: 'Brazil',      f1: 'br',     team2: 'Morocco',      f2: 'ma',     venue: 'MetLife Stadium, New Jersey' },
+  { date: 'Jun 13', time: '21:00', team1: 'Haiti',       f1: 'ht',     team2: 'Scotland',     f2: 'gb-sct', venue: 'Gillette Stadium, Boston' },
 ];
 
 const tilt = (e) => {
