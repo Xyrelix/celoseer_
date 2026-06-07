@@ -50,7 +50,7 @@ function App() {
     }
   };
 
-  /* Show onboarding immediately — Privy init happens in background */
+  /* Show onboarding when not authenticated — Privy init happens in background */
   if (!authenticated) {
     return <Onboarding privyReady={ready} />;
   }

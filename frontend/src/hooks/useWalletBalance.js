@@ -2,21 +2,27 @@ import { useReadContract } from 'wagmi';
 import { erc20Abi, formatUnits } from 'viem';
 import { CUSD_ADDRESS, ACTIVE_CHAIN } from '../config/wagmi';
 
+const HAS_PRIVY = !!(import.meta.env.VITE_PRIVY_APP_ID?.length > 4);
+
 // wagmi 3's useBalance no longer takes a `token` param — read the ERC20
 // balanceOf directly. cUSD is 18 decimals.
 export function useWalletBalance(address) {
-  const { data, isLoading, refetch } = useReadContract({
-    address: CUSD_ADDRESS[ACTIVE_CHAIN.id],
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    chainId: ACTIVE_CHAIN.id,
-    query: { enabled: !!address },
-  });
+  // When WagmiProvider isn't mounted (no Privy App ID), return zero stubs.
+  const result = HAS_PRIVY
+    ? useReadContract({  // eslint-disable-line react-hooks/rules-of-hooks
+        address: CUSD_ADDRESS[ACTIVE_CHAIN.id],
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: address ? [address] : undefined,
+        chainId: ACTIVE_CHAIN.id,
+        query: { enabled: !!address },
+      })
+    : { data: undefined, isLoading: false, refetch: () => {} };
 
-  const formatted = data != null
-    ? parseFloat(formatUnits(data, 18)).toFixed(2)
+  const formatted = result.data != null
+    ? parseFloat(formatUnits(result.data, 18)).toFixed(2)
     : '0.00';
 
-  return { balance: formatted, isLoading, refetch };
+  return { balance: formatted, isLoading: result.isLoading, refetch: result.refetch };
 }
+
