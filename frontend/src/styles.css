@@ -926,14 +926,20 @@ button:active::after {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 .flag-icon {
-  width: 52px;
-  height: 36px;
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .market-meta {
   display: flex;
@@ -1076,14 +1082,15 @@ button:active::after {
   font-weight: 600;
 }
 .prediction-tag {
-  background: linear-gradient(135deg, #1aaa60, var(--celo-green));
-  color: var(--pitch-dark);
+  background: linear-gradient(135deg, #b8860b, #ffd700);
+  color: #1a1200;
   padding: 3px 10px;
   border-radius: 6px;
   font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.35);
 }
 .card-cta {
   margin-top: 10px;
@@ -3872,9 +3879,28 @@ button:active::after {
 
 /* Trend chart */
 .trend-card {
-  padding: 16px;
+  padding: 12px 14px 10px;
   border-radius: 14px;
 }
+
+/* SVG line graph */
+.accuracy-line-graph {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.accuracy-line-path {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: lineDrawIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.2s;
+}
+
+@keyframes lineDrawIn {
+  to { stroke-dashoffset: 0; }
+}
+
 .trend-bars {
   display: flex;
   align-items: flex-end;

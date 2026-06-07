@@ -34,7 +34,7 @@ const AI_CALLS = [
   { rank: 6, call: 'Germany to Win World Cup',   confidence: 71, trend: '+0.5%', flag: 'de', tag: 'CONTENDER' },
 ];
 
-const TREND_BARS = [
+const TREND_DATA = [
   { week: 'W1', val: 45 },
   { week: 'W2', val: 52 },
   { week: 'W3', val: 48 },
@@ -49,7 +49,96 @@ const HOT_MARKETS = [
   { title: 'USA Semi-Finals', volume: '64k', move: '-3%', up: false },
 ];
 
-const maxBar = Math.max(...TREND_BARS.map(b => b.val));
+/* ── SVG Line Graph ── */
+function AccuracyLineGraph({ data }) {
+  const W = 300, H = 110, PAD = { top: 16, right: 14, bottom: 26, left: 30 };
+  const innerW = W - PAD.left - PAD.right;
+  const innerH = H - PAD.top  - PAD.bottom;
+  const minVal = 0, maxVal = 100;
+
+  const xOf = (i) => PAD.left + (i / (data.length - 1)) * innerW;
+  const yOf = (v) => PAD.top  + innerH - ((v - minVal) / (maxVal - minVal)) * innerH;
+
+  /* Smooth bezier path via cardinal-spline control points */
+  const pts = data.map((d, i) => [xOf(i), yOf(d.val)]);
+  const pathD = pts.reduce((acc, [x, y], i) => {
+    if (i === 0) return `M ${x},${y}`;
+    const [px, py] = pts[i - 1];
+    const cpx = (px + x) / 2;
+    return `${acc} C ${cpx},${py} ${cpx},${y} ${x},${y}`;
+  }, '');
+
+  /* Area fill path */
+  const areaD = `${pathD} L ${pts[pts.length - 1][0]},${PAD.top + innerH} L ${pts[0][0]},${PAD.top + innerH} Z`;
+
+  /* Y-axis tick lines */
+  const yTicks = [0, 25, 50, 75, 100];
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="accuracy-line-graph" aria-label="Accuracy Trend Line Graph">
+      <defs>
+        <linearGradient id="lineAreaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="#ffd700" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#ffd700" stopOpacity="0.02" />
+        </linearGradient>
+        <linearGradient id="lineStrokeGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor="#b8860b" />
+          <stop offset="100%" stopColor="#ffd700" />
+        </linearGradient>
+        <filter id="dotGlow">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      {/* Grid lines */}
+      {yTicks.map(tick => (
+        <g key={tick}>
+          <line
+            x1={PAD.left} y1={yOf(tick)} x2={PAD.left + innerW} y2={yOf(tick)}
+            stroke="rgba(255,255,255,0.06)" strokeWidth="1"
+          />
+          <text x={PAD.left - 4} y={yOf(tick) + 4} textAnchor="end"
+            fontSize="7" fill="#6b7280">{tick}</text>
+        </g>
+      ))}
+
+      {/* Area fill */}
+      <path d={areaD} fill="url(#lineAreaGrad)" />
+
+      {/* Line stroke */}
+      <path
+        d={pathD}
+        fill="none"
+        stroke="url(#lineStrokeGrad)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="accuracy-line-path"
+      />
+
+      {/* Data points */}
+      {pts.map(([x, y], i) => (
+        <g key={i} filter="url(#dotGlow)">
+          <circle cx={x} cy={y} r="4.5" fill="#ffd700" opacity="0.9" />
+          <circle cx={x} cy={y} r="2"   fill="#fff" />
+        </g>
+      ))}
+
+      {/* X-axis labels */}
+      {data.map((d, i) => (
+        <text key={i} x={xOf(i)} y={H - 4} textAnchor="middle"
+          fontSize="7.5" fill="#9ca3af" fontWeight="600">{d.week}</text>
+      ))}
+
+      {/* Value labels above each point */}
+      {pts.map(([x, y], i) => (
+        <text key={i} x={x} y={y - 8} textAnchor="middle"
+          fontSize="7" fill="#ffd700" fontWeight="700" opacity="0.9">{data[i].val}%</text>
+      ))}
+    </svg>
+  );
+}
 
 export default function InsightsTab() {
   const accuracy = useCountUp(82.4, 1800, 1);
@@ -92,23 +181,7 @@ export default function InsightsTab() {
           <h3 className="section-title">Accuracy Trend</h3>
         </div>
         <div className="trend-card glass-market">
-          <div className="trend-bars">
-            {TREND_BARS.map((b, i) => (
-              <div key={i} className="trend-bar-wrap" style={{ animationDelay: `${i * 0.08}s` }}>
-                <span className="trend-pct">{b.val}%</span>
-                <div className="trend-bar-track">
-                  <div
-                    className="trend-bar-fill"
-                    style={{
-                      height: `${(b.val / maxBar) * 100}%`,
-                      background: b.val >= 70 ? 'linear-gradient(180deg,#10b981,#34d399)' : 'linear-gradient(180deg,#fbbf24,#f59e0b)',
-                    }}
-                  />
-                </div>
-                <span className="trend-week">{b.week}</span>
-              </div>
-            ))}
-          </div>
+          <AccuracyLineGraph data={TREND_DATA} />
         </div>
       </div>
 
