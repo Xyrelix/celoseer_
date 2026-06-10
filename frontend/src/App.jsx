@@ -8,16 +8,21 @@ import PredictTab   from './components/PredictTab';
 import InsightsTab  from './components/InsightsTab';
 import OddsSlip     from './components/OddsSlip';
 import Profile      from './components/Profile';
+import Faucet       from './components/Faucet';
 import Icon         from './components/Icon';
-import { useAuth }          from './hooks/useAuth';
-import { useWalletBalance } from './hooks/useWalletBalance';
+import { useAuth }           from './hooks/useAuth';
+import { useWalletBalance }  from './hooks/useWalletBalance';
+import { useWelcomeDeposit } from './hooks/useWelcomeDeposit';
 import './styles.css';
 
 function App() {
   const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
   const { balance, refetch: refetchBalance } = useWalletBalance(walletAddress);
 
-  const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile'
+  // Auto-deposit 500 cUSD to every new user, once.
+  useWelcomeDeposit(walletAddress, authenticated, refetchBalance);
+
+  const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile' | 'faucet'
   const [activeTab,      setActiveTab]      = useState('home');
   const [selectedMarket, setSelectedMarket] = useState(null);
   const [portfolio,      setPortfolio]      = useState([]);
@@ -73,6 +78,14 @@ function App() {
               <div className="top-bar-right">
                 <button
                   className="profile-icon-btn"
+                  onClick={() => setAppState('faucet')}
+                  aria-label="Test Faucet"
+                  title="Claim test cUSD"
+                >
+                  <Icon name="coin" size={22} color="#ffd700" />
+                </button>
+                <button
+                  className="profile-icon-btn"
                   onClick={() => setAppState('profile')}
                   aria-label="My Profile"
                 >
@@ -112,6 +125,18 @@ function App() {
               balance={balance}
               positions={portfolio}
               onBack={() => setAppState('main')}
+            />
+          </div>
+        )}
+
+        {appState === 'faucet' && (
+          <div className="page-slide-in">
+            <Faucet
+              walletAddress={walletAddress}
+              displayAddress={displayAddress}
+              balance={balance}
+              onBack={() => setAppState('main')}
+              onClaimed={refetchBalance}
             />
           </div>
         )}
