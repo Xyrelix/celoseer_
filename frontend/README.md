@@ -1,237 +1,204 @@
-# CeloSeer Frontend - Mobile-First Prediction Market UI
+# CeloSeer Frontend
 
-A sleek, gamified prediction market interface built with React + Vite, styled for dark mode with mobile-first responsive design.
+Mobile-first prediction market UI built with **React 19 + Vite 8**, dark mode, glassmorphism, and real Celo blockchain integration via Privy + wagmi.
+
+---
 
 ## 📱 Features
 
-### 1. **User Onboarding & Smart Wallet Creation**
-- Email/username signup with silent account abstraction
-- Social login integration (Google, X/Twitter)
-- Visual onboarding flow with step indicators
-- Smart wallet generation simulation
+### 1. Onboarding (`Onboarding.jsx`)
+- Full-screen hero carousel (images + video) with crossfade transitions
+- Typewriter tagline rotator across 5 marketing messages
+- **16-language support** (EN, ES, FR, PT, DE, AR, IT, ZH, JA, KO, NL, TR, PL, RU, HI, SW) with RTL for Arabic
+- Feature highlights: AI Predictions, Earn cUSD, Gasless Wallet, WC 2026
+- Delegates login to **Privy** (`useAuth().login()`) — email + Google + Twitter
 
-### 2. **Dynamic Market Discover Feed**
-- AI-generated prediction pool cards
-- Category filtering (Crypto, Tech, Economics)
-- Live sentiment bars showing community predictions
-- Interactive odds display (YES/NO)
-- Real-time volume metrics
-- Search functionality across markets
+### 2. Home Tab (`HomeTab.jsx`)
+- Auto-advancing hero slider (images + video, 4 s interval)
+- Tournament quick-stats strip (nations, matches, cities)
+- **Tournament favorites** — 3D-tilt cards linking directly to OddsSlip
+- Upcoming fixtures list (next 6 WC 2026 group-stage matches)
+- **Classic highlights** — IntersectionObserver-driven video reel (one plays at a time)
 
-### 3. **Live AI Odds Slip - Real-Time Checkout**
-- Binary prediction selection (YES/NO)
-- Interactive wager amount input
-- Quick amount buttons (10, 25, 50, 100 cUSD)
-- Real-time calculation of:
-  - Potential payout
-  - Potential profit
-  - Adjusted odds with slippage
-- Slippage control slider (0-10%)
-- Risk disclaimer
+### 3. Standings Tab (`StandingsTab.jsx`)
+- Group tables (A–F) with team rankings
+- Knockout bracket display
 
-### 4. **My Portfolio & Rewards Hub**
-- Wallet balance tracking
-- Active vs. closed positions tabs
-- Accuracy statistics with 6-week trend chart
-- Performance metrics (accuracy %, winnings, streaks)
-- Individual position details with results
-- One-tap fund withdrawal system
+### 4. Predict Tab (`PredictTab.jsx` + `MarketDiscoverFeed.jsx`)
+- Fetches live AI-enriched market data from the backend (`/api/markets`)
+- Category filtering and search
+- Sentiment bars, confidence percentages, AI prediction labels
+- Tapping a card opens `OddsSlip`
 
-## 🎨 Design Highlights
+### 5. Insights Tab (`InsightsTab.jsx`)
+- Animated count-up stats: 82.4% accuracy, 847 calls, 32 teams
+- SVG accuracy trend line graph with bezier smoothing
+- Ranked AI calls list with confidence bars
+- Hot markets with volume and 24h movement
 
-- **Dark Mode**: Premium dark gradient backgrounds (#0f0f0f to #1a1a1a)
-- **Gamified UX**: Micro-interactions, animations, and visual feedback
-- **Mobile-First**: Optimized for devices, responsive up to 768px
-- **Glassmorphism Effects**: Subtle transparency and borders
-- **Color Coding**: 
-  - Blue (#3b82f6): Primary actions & accents
-  - Green (#10b981): Positive predictions/winnings
-  - Red (#ef4444): Negative/risk indicators
-  - Purple (#8b5cf6): Secondary gradients
+### 6. OddsSlip (`OddsSlip.jsx`)
+- **Live on-chain odds** via `getOdds()` read (refreshed every 15 s)
+- Falls back to AI odds when pools are empty; LIVE badge when on-chain
+- Quick wager buttons: 10 / 25 / 50 / 100 cUSD
+- Real-time payout + profit calculation
+- Slippage slider (0–10%)
+- **2-step on-chain flow:** ERC-20 `approve` → `placeBet` (Privy wallet)
+- Stage indicators: Approving… / Placing Bet… / Bet Placed!
+
+### 7. Profile / Portfolio (`Profile.jsx`, `Portfolio.jsx`)
+- Wallet balance (live cUSD from chain)
+- Active and closed position tabs
+- Accuracy trend chart and performance stats
+
+---
+
+## 🏗️ Architecture
+
+```
+App.jsx  (state: main | odds | profile)
+├── Onboarding.jsx          ← not authenticated
+└── main layout             ← authenticated
+    ├── TopBar
+    ├── BottomNav (home | standings | predict | insights)
+    ├── HomeTab
+    ├── StandingsTab
+    ├── PredictTab → MarketDiscoverFeed
+    ├── InsightsTab
+    ├── OddsSlip             ← appState='odds'
+    └── Profile              ← appState='profile'
+```
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 16+ 
-- npm or yarn
+- Node.js 18+
 
 ### Installation
 
 ```bash
-# Install dependencies
+cp .env.example .env          # fill in required vars (see below)
 npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm run dev                   # → http://localhost:5173
+npm run build                 # production bundle → dist/
+npm run preview               # preview production build
 ```
 
-The app will run on `http://localhost:5173` (or shown in terminal)
+### Environment Variables
+
+```
+VITE_PRIVY_APP_ID=<your-privy-app-id>
+VITE_BACKEND_URL=http://localhost:4000
+VITE_CONTRACT_ADDRESS=0x91F8763B119CA7EC990ECCD0Db6A19ca13cAfDDa
+VITE_CUSD_ADDRESS=0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1
+```
+
+---
 
 ## 📁 Project Structure
 
 ```
 frontend/
-├── public/
-│   └── index.html          # Main HTML entry point
+├── public/                     # Static assets (images, videos, logos)
 ├── src/
 │   ├── components/
-│   │   ├── Onboarding.jsx      # Auth & wallet creation flow
-│   │   ├── MarketDiscoverFeed.jsx # Main market discovery UI
-│   │   ├── OddsSlip.jsx        # Real-time odds calculator
-│   │   └── Portfolio.jsx       # User portfolio & rewards
-│   ├── App.jsx             # Main app router
-│   ├── main.jsx            # React entry point
-│   └── styles.css          # Global dark mode styles (900+ lines)
+│   │   ├── BackgroundFX.jsx    # Animated gradient canvas
+│   │   ├── BottomNav.jsx       # 4-tab navigation
+│   │   ├── HomeTab.jsx         # Hero slider + highlights + fixtures
+│   │   ├── StandingsTab.jsx    # Group tables + bracket
+│   │   ├── PredictTab.jsx      # Market browse (calls backend)
+│   │   ├── MarketDiscoverFeed.jsx  # Reusable card grid
+│   │   ├── InsightsTab.jsx     # AI stats + chart
+│   │   ├── OddsSlip.jsx        # On-chain bet placement
+│   │   ├── Portfolio.jsx       # Portfolio positions
+│   │   ├── Profile.jsx         # Account + settings
+│   │   ├── Onboarding.jsx      # Pre-auth landing (16 languages)
+│   │   └── Icon.jsx            # SVG icon registry
+│   ├── hooks/
+│   │   ├── useAuth.js          # Privy wrapper
+│   │   ├── useContract.js      # wagmi reads/writes + odds helpers
+│   │   ├── useWalletBalance.js # cUSD balance
+│   │   ├── useBets.js          # Portfolio state
+│   │   └── useMarkets.js       # Backend market fetcher
+│   ├── config/
+│   │   ├── wagmi.js            # wagmi + Privy chain config
+│   │   └── privy.js            # PrivyProvider config
+│   ├── contracts/
+│   │   └── deployment.js       # Contract address, ABI, market mappings
+│   ├── services/
+│   │   └── api.js              # fetch wrapper for backend REST
+│   ├── App.jsx                 # Root component + state machine
+│   ├── main.jsx                # React DOM + provider tree
+│   └── styles.css              # Global stylesheet (3 200+ lines)
+├── index.html
 ├── vite.config.js
 └── package.json
 ```
 
-## 🎯 Component Architecture
+---
 
-### App.jsx
-Central state manager handling:
-- View switching (onboarding → discover → odds → portfolio)
-- User authentication state
-- Wallet balance tracking
-- Portfolio positions management
+## 🎨 Design System
 
-### Onboarding.jsx
-Two-step signup:
-1. Email/social login entry
-2. Smart wallet confirmation
+| Token | Value |
+|---|---|
+| Background | `#0a0a0a → #111111` |
+| Gold accent | `#ffd700` |
+| Success (win) | `#10b981` |
+| Error (loss) | `#ef4444` |
+| Purple | `#6366f1` |
+| Orange | `#f97316` |
+| Glass card | `rgba(255,255,255,0.04)` + `backdrop-filter: blur(16px)` |
+| Glass border | `rgba(255,255,255,0.08)` |
+| Glow button | gold drop-shadow + animated pulse |
 
-### MarketDiscoverFeed.jsx
-Main market browsing interface:
-- Category filtering
-- Search functionality
-- Market card grid with sentiment visualization
-- Wallet info display
-
-### OddsSlip.jsx
-Checkout flow for placing wagers:
-- Prediction selection buttons
-- Amount input with quick presets
-- Real-time odds calculation
-- Slippage management
-
-### Portfolio.jsx
-User dashboard displaying:
-- Wallet status cards
-- Performance metrics
-- Accuracy trend chart
-- Position history
-
-## 💻 Responsive Breakpoints
-
-- **Mobile**: Full width optimization (< 480px)
-- **Tablet**: 2-column layouts (768px+)
-- **Desktop**: Enhanced spacing and grid layouts
-
-## 🎪 Gamification Elements
-
-- Animated onboarding with floating wallet icon
-- Loading dots during async operations
-- Sentiment bars for community predictions
-- Real-time payout calculations
-- Accuracy trend visualization
-- Win/loss result badges
-- Visual feedback on interactions
-
-## 🔄 State Flow
-
-```
-App Component
-├── currentView: 'onboarding' → 'discover' → 'odds' → 'portfolio'
-├── user: { email, username, walletAddress, initialBalance }
-├── selectedMarket: { id, title, odds, sentiment, ... }
-├── walletBalance: number (cUSD)
-└── portfolio: [ { id, marketId, prediction, amount, result }, ... ]
-```
-
-## 🌐 API Integration Points
-
-The frontend is structured to easily integrate:
-- Backend authentication endpoints (for wallet creation)
-- Market data service (fetch predictions)
-- Odds calculation service (real-time updates)
-- Portfolio service (fetch user positions)
-- Withdrawal service (fund repatriation)
-
-## 📱 Mobile Optimization
-
-- Touch-friendly buttons (min 44px tap targets)
-- Scrollable category tabs
-- Full-width cards for easy interaction
-- Optimized fonts and spacing
-- Safe area insets for notch devices
-
-## 🎨 Customization
-
-### Color Scheme
-Edit CSS variables in `styles.css`:
-```css
-/* Primary */
-background: #0f0f0f;
-accent: #3b82f6;
-
-/* Secondary */
-success: #10b981;
-warning: #fbbf24;
-error: #ef4444;
-```
-
-### Typography
-Font stack: System fonts optimized for readability
-
-## ⚡ Performance
-
-- Vite for fast HMR development
-- Minimal dependencies (React + React-DOM only)
-- CSS-only animations for smooth 60fps
-- Lazy component rendering
-
-## 🔐 Security Notes
-
-- Smart wallet addresses are simulated (replace with real wallet service)
-- All transaction data is currently mock data
-- Integrate real Celo blockchain APIs for production
-- Add proper authentication tokens
+---
 
 ## 📦 Dependencies
 
-- `react@^18.3.0` - UI framework
-- `react-dom@^18.3.0` - DOM rendering
-- `vite@^5.0.0` - Build tool
-- `@vitejs/plugin-react@^4.3.0` - React HMR plugin
+| Package | Version | Purpose |
+|---|---|---|
+| `react` | `^19.2.0` | UI framework |
+| `react-dom` | `^19.2.0` | DOM rendering |
+| `@privy-io/react-auth` | `^3.0.0` | Auth + embedded wallet |
+| `@privy-io/wagmi` | `^4.0.0` | Privy-aware wagmi adapter |
+| `wagmi` | `^3.6.0` | React hooks for Ethereum |
+| `viem` | `^2.52.0` | Low-level EVM client |
+| `@tanstack/react-query` | `^5.100.0` | Data fetching / caching |
+| `vite` | `^8.0.12` | Build tool |
+| `@vitejs/plugin-react` | `^6.0.1` | React HMR |
 
-## 🚀 Deployment Ready
+---
 
-The frontend can be deployed to:
-- Vercel (auto-deployment from Git)
-- Netlify (drag & drop or Git sync)
-- AWS S3 + CloudFront
-- Firebase Hosting
-- GitHub Pages
+## 🔐 Auth Degradation
 
-## 📝 Future Enhancements
+If `VITE_PRIVY_APP_ID` is missing or ≤ 4 characters, the app runs with stub auth objects — useful for UI development without a Privy account. All wallet-dependent features are disabled gracefully.
 
-- [ ] WebSocket for real-time market updates
-- [ ] Push notifications for market changes
-- [ ] Chart.js for advanced analytics
-- [ ] PWA support for offline functionality
-- [ ] Dark/Light mode toggle
-- [ ] Internationalization (i18n)
-- [ ] Accessibility improvements (WCAG AA)
+---
 
-## 📧 Support
+## 🗺️ State Flow
 
-For issues or questions, refer to backend API documentation and ensure Celo testnet is configured.
+```
+App.jsx
+├── appState: 'main' | 'odds' | 'profile'
+├── activeTab: 'home' | 'standings' | 'predict' | 'insights'
+├── selectedMarket: Market | null
+└── portfolio: Bet[]
+```
+
+---
+
+## 🚀 Deployment
+
+Works on any static host:
+
+```bash
+npm run build
+# Upload dist/ to Vercel, Netlify, Firebase Hosting, etc.
+```
+
+Vercel auto-deploys from the `frontend/` subdirectory.  
+Set env vars in the Vercel dashboard under **Settings → Environment Variables**.
 
 ---
 

@@ -32,7 +32,7 @@ const mockMarkets = [
   { id: 5, title: 'USA to Reach World Cup Semi-Finals?', category: 'stage', team: 'USA',      yesOdds: 2.1, noOdds: 1.85, sentiment: 58, volume: 64320,  image: 'https://flagcdn.com/us.svg', confidence: 72, prediction: 'LIKELY' },
   { id: 6, title: 'Spain to Reach World Cup Final?',  category: 'stage',   team: 'Spain',     yesOdds: 2.45, noOdds: 1.65, sentiment: 69, volume: 112560, image: 'https://flagcdn.com/es.svg', confidence: 76, prediction: 'PROBABLE' },
   { id: 7, title: 'Germany to Win World Cup 2026?',   category: 'knockout', team: 'Germany',  yesOdds: 5.5, noOdds: 1.18, sentiment: 62, volume: 73890,  image: 'https://flagcdn.com/de.svg', confidence: 71, prediction: 'CONTENDER' },
-  { id: 8, title: 'Final Match Over 2.5 Goals?',      category: 'prop',                        yesOdds: 1.65, noOdds: 2.1,  sentiment: 74, volume: 203450, image: 'https://cdn-icons-png.flaticon.com/512/2436/2436481.png', confidence: 79, prediction: 'LIKELY' },
+  { id: 8, title: 'Final Match Over 2.5 Goals?',      category: 'prop',                        yesOdds: 1.65, noOdds: 2.1,  sentiment: 74, volume: 203450, image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26bd.png', confidence: 79, prediction: 'LIKELY' },
 ];
 
 const CATEGORIES = [
