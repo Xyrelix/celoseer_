@@ -78,8 +78,10 @@ export function useOnChainOdds(backendMarketId) {
     chainId: ACTIVE_CHAIN.id,
     query: {
       enabled,
-      // odds shift as pools fill — keep them reasonably fresh
-      refetchInterval: 15_000,
+      // odds shift as pools fill — refresh periodically, but not so often we
+      // trip the public RPC's rate limit (403s on forno).
+      refetchInterval: 60_000,
+      refetchOnWindowFocus: false,
     },
   });
 

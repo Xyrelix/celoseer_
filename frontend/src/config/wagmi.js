@@ -10,10 +10,14 @@ export const CUSD_ADDRESS = {
 
 export const ACTIVE_CHAIN = celoSepolia;
 
+// Hardcoded RPC fallback — forno 403s the browser under load, so default to
+// dRPC (has CORS + headroom). Override with VITE_RPC_URL in .env / Vercel.
+const SEPOLIA_RPC = import.meta.env.VITE_RPC_URL || 'https://celo-sepolia.drpc.org';
+
 export const wagmiConfig = createConfig({
   chains: [celo, celoSepolia],
   transports: {
     [celo.id]:        http(),
-    [celoSepolia.id]: http(),
+    [celoSepolia.id]: http(SEPOLIA_RPC),
   },
 });
