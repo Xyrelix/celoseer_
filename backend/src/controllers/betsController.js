@@ -1,19 +1,33 @@
 import { getMarketById } from '../services/footballData.js';
+import { db, initDb } from '../lib/db.js';
+import { log } from '../lib/logger.js';
 
-// In-memory bet store keyed by wallet address (replace with DB later)
-const betsByWallet = new Map();
-let betIdCounter = 1;
-
-function getBetsForWallet(address) {
-  return betsByWallet.get(address.toLowerCase()) ?? [];
+// Map a DB row to the API shape the frontend expects.
+function rowToBet(r) {
+  return {
+    id:            Number(r.id),
+    marketId:      Number(r.market_id),
+    marketTitle:   r.market_title,
+    walletAddress: r.wallet_address,
+    outcome:       r.outcome,
+    amount:        r.amount,
+    odds:          r.odds,
+    potentialWin:  r.potential_win,
+    profit:        r.profit,
+    status:        r.status,
+    result:        r.result ?? null,
+    txHash:        r.tx_hash ?? null,
+    timestamp:     r.created_at,
+  };
 }
 
 export async function placeBet(req, res) {
   try {
+    await initDb();
     const walletAddress = req.headers['x-wallet-address'];
     if (!walletAddress) return res.status(401).json({ error: 'Wallet address required' });
 
-    const { marketId, outcome, amount } = req.body;
+    const { marketId, outcome, amount, txHash } = req.body;
     if (!marketId || !outcome || !amount) {
       return res.status(400).json({ error: 'marketId, outcome, and amount are required' });
     }
@@ -31,39 +45,48 @@ export async function placeBet(req, res) {
     const odds = oddsMap[outcome];
     if (!odds) return res.status(400).json({ error: `No ${outcome} odds for this market` });
 
-    const bet = {
-      id: betIdCounter++,
-      marketId,
-      marketTitle: market.title,
-      walletAddress: walletAddress.toLowerCase(),
-      outcome,
-      amount,
-      odds,
-      potentialWin: +(amount * odds).toFixed(4),
-      profit: +((amount * odds) - amount).toFixed(4),
-      timestamp: new Date().toISOString(),
-      status: 'active',
-    };
+    const potentialWin = +(amount * odds).toFixed(4);
+    const profit = +((amount * odds) - amount).toFixed(4);
 
-    const existing = getBetsForWallet(walletAddress);
-    betsByWallet.set(walletAddress.toLowerCase(), [...existing, bet]);
+    const result = await db.execute({
+      sql: `INSERT INTO bets
+              (wallet_address, market_id, market_title, outcome, amount, odds, potential_win, profit, tx_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING *`,
+      args: [
+        walletAddress.toLowerCase(),
+        marketId,
+        market.title,
+        outcome,
+        amount,
+        odds,
+        potentialWin,
+        profit,
+        txHash ?? null,
+      ],
+    });
 
-    res.status(201).json({ bet, message: 'Bet placed successfully' });
+    res.status(201).json({ bet: rowToBet(result.rows[0]), message: 'Bet placed successfully' });
   } catch (err) {
-    console.error('placeBet error:', err);
+    log.error('placeBet error:', err);
     res.status(500).json({ error: 'Failed to place bet' });
   }
 }
 
-export function getUserBets(req, res) {
+export async function getUserBets(req, res) {
   try {
+    await initDb();
     const walletAddress = req.headers['x-wallet-address'] ?? req.params.address;
     if (!walletAddress) return res.status(401).json({ error: 'Wallet address required' });
 
     const { status } = req.query;
-    let bets = getBetsForWallet(walletAddress);
+    const sql = status
+      ? `SELECT * FROM bets WHERE wallet_address = ? AND status = ? ORDER BY id DESC`
+      : `SELECT * FROM bets WHERE wallet_address = ? ORDER BY id DESC`;
+    const args = status ? [walletAddress.toLowerCase(), status] : [walletAddress.toLowerCase()];
 
-    if (status) bets = bets.filter(b => b.status === status);
+    const { rows } = await db.execute({ sql, args });
+    const bets = rows.map(rowToBet);
 
     const totalStaked = bets.reduce((sum, b) => sum + b.amount, 0);
     const activeBets = bets.filter(b => b.status === 'active');
@@ -81,7 +104,7 @@ export function getUserBets(req, res) {
       },
     });
   } catch (err) {
-    console.error('getUserBets error:', err);
+    log.error('getUserBets error:', err);
     res.status(500).json({ error: 'Failed to load bets' });
   }
 }

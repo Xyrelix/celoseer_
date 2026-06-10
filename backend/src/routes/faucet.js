@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { isAddress } from 'viem';
 import { sendWelcome, sendClaim, isFaucetConfigured } from '../lib/faucet.js';
+import { log } from '../lib/logger.js';
 
 const router = Router();
 
@@ -26,7 +27,7 @@ router.post('/welcome', async (req, res) => {
     const result = await sendWelcome(address);
     res.json({ ok: true, amount: '500', ...result });
   } catch (err) {
-    console.error('welcome failed:', err.shortMessage ?? err.message);
+    log.error('welcome failed:', err.shortMessage ?? err.message);
     res.status(500).json({ error: err.shortMessage ?? err.message });
   }
 });
@@ -49,7 +50,7 @@ router.post('/claim', async (req, res) => {
     res.json({ ok: true, amount: CLAIM_AMOUNT, ...result });
   } catch (err) {
     lastClaim.delete(address.toLowerCase()); // failed — let them retry
-    console.error('claim failed:', err.shortMessage ?? err.message);
+    log.error('claim failed:', err.shortMessage ?? err.message);
     res.status(500).json({ error: err.shortMessage ?? err.message });
   }
 });

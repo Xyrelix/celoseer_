@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Onboarding   from './components/Onboarding';
 import BackgroundFX from './components/BackgroundFX';
 import BottomNav    from './components/BottomNav';
@@ -13,7 +13,25 @@ import Icon         from './components/Icon';
 import { useAuth }           from './hooks/useAuth';
 import { useWalletBalance, useNativeBalance } from './hooks/useWalletBalance';
 import { useWelcomeDeposit } from './hooks/useWelcomeDeposit';
+import { placeBet as apiPlaceBet, fetchMyBets } from './services/api';
 import './styles.css';
+
+// Map a backend bet record onto the shape Profile expects.
+function normalizeBet(b) {
+  return {
+    id:               b.id,
+    marketId:         b.marketId,
+    marketTitle:      b.marketTitle,
+    prediction:       b.outcome,
+    amount:           b.amount,
+    odds:             b.odds,
+    potentialPayout:  b.potentialWin,
+    potentialProfit:  b.profit,
+    timestamp:        new Date(b.timestamp).toLocaleString(),
+    status:           b.status,
+    result:           b.result,
+  };
+}
 
 function App() {
   const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
@@ -28,16 +46,35 @@ function App() {
   const [selectedMarket, setSelectedMarket] = useState(null);
   const [portfolio,      setPortfolio]      = useState([]);
 
+  // Load this wallet's bets from the backend.
+  const loadBets = useCallback(async () => {
+    if (!walletAddress) { setPortfolio([]); return; }
+    try {
+      const { bets } = await fetchMyBets(walletAddress);
+      setPortfolio(bets.map(normalizeBet));
+    } catch (err) {
+      console.warn('failed to load bets:', err.message);
+    }
+  }, [walletAddress]);
+
+  useEffect(() => { loadBets(); }, [loadBets]);
+
   const handleMarketSelect = (market) => {
     setSelectedMarket(market);
     setAppState('odds');
   };
 
-  const handleOddsSubmit = (betData) => {
-    setPortfolio(prev => [
-      ...prev,
-      { id: Date.now(), ...betData, timestamp: new Date().toLocaleString(), status: 'active' },
-    ]);
+  const handleOddsSubmit = async (betData) => {
+    // Persist the bet to the backend so it survives reloads.
+    try {
+      await apiPlaceBet(
+        { marketId: betData.marketId, outcome: betData.prediction, amount: betData.amount, txHash: betData.txHash },
+        walletAddress,
+      );
+    } catch (err) {
+      console.warn('failed to save bet:', err.message);
+    }
+    await loadBets();
     // bet just spent cUSD on-chain — pull the fresh balance
     refetchBalance?.();
     setAppState('main');

@@ -1,5 +1,6 @@
 import { getPrediction, getTournamentPrediction } from '../services/aiPredictor.js';
 import { TEAMS } from '../data/worldCupMatches.js';
+import { log } from '../lib/logger.js';
 
 export async function getMatchPrediction(req, res) {
   try {
@@ -13,7 +14,7 @@ export async function getMatchPrediction(req, res) {
     const prediction = await getPrediction(team1, team2, stage ?? 'group');
     res.json(prediction);
   } catch (err) {
-    console.error('getMatchPrediction error:', err);
+    log.error('getMatchPrediction error:', err);
     res.status(500).json({ error: 'Prediction failed' });
   }
 }
@@ -29,7 +30,7 @@ export async function getTeamTournamentPrediction(req, res) {
     const prediction = await getTournamentPrediction(team);
     res.json(prediction);
   } catch (err) {
-    console.error('getTeamTournamentPrediction error:', err);
+    log.error('getTeamTournamentPrediction error:', err);
     res.status(500).json({ error: 'Prediction failed' });
   }
 }

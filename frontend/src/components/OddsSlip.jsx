@@ -36,7 +36,7 @@ export default function OddsSlip({ market, walletAddress, walletBalance, onSubmi
     if (stage === 'error') { reset(); return; }
 
     try {
-      await placeBet({
+      const txHash = await placeBet({
         backendMarketId: market.id,
         outcome: prediction,
         amount: betAmount,
@@ -49,6 +49,7 @@ export default function OddsSlip({ market, walletAddress, walletBalance, onSubmi
         odds:           adjustedOdds,
         potentialPayout,
         potentialProfit,
+        txHash,
       });
     } catch {
       // error state handled by hook
