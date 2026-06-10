@@ -3,6 +3,7 @@ import Icon from './Icon';
 import { claimFaucet } from '../services/api';
 
 const EXPLORER_TX = (hash) => `https://celo-sepolia.blockscout.com/tx/${hash}`;
+const GAS_FAUCET = 'https://faucet.celo.org/celo-sepolia';
 
 export default function Faucet({ walletAddress, displayAddress, balance, onBack, onClaimed }) {
   const [status, setStatus] = useState('idle'); // idle | claiming | done | error
@@ -89,6 +90,31 @@ export default function Faucet({ walletAddress, displayAddress, balance, onBack,
             <span style={{ color: '#ef4444', fontSize: '0.8rem' }}>{error}</span>
           </div>
         )}
+      </div>
+
+      {/* Gas — users need CELO to actually send a bet tx */}
+      <div className="glass-market" style={{ padding: '16px 18px', marginTop: 14 }}>
+        <h4 style={{ margin: '0 0 6px', color: '#fff', fontSize: '0.95rem' }}>Need gas to place bets?</h4>
+        <p style={{ fontSize: '0.8rem', color: '#9ca3af', margin: '0 0 12px' }}>
+          Bets are sent from your own wallet, which needs a little <strong>CELO</strong> for gas.
+          Claim some free, then paste your address below.
+        </p>
+        <button
+          className="btn-secondary"
+          style={{ width: '100%', marginBottom: 8 }}
+          onClick={() => navigator.clipboard?.writeText(walletAddress || '')}
+        >
+          Copy my address
+        </button>
+        <a
+          href={GAS_FAUCET}
+          target="_blank"
+          rel="noreferrer"
+          className="btn-primary btn-lg"
+          style={{ width: '100%', display: 'block', textAlign: 'center', textDecoration: 'none' }}
+        >
+          Get CELO for gas ↗
+        </a>
       </div>
 
       <div className="disclaimer" style={{ marginTop: 16 }}>

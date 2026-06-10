@@ -1,12 +1,13 @@
 import { useWriteContract, useReadContract } from 'wagmi';
-import { parseEther, erc20Abi } from 'viem';
+import { parseEther, erc20Abi, parseAbi } from 'viem';
 import { useState } from 'react';
 import deployment from '../contracts/deployment.js';
 import { ACTIVE_CHAIN } from '../config/wagmi';
 
 export const CONTRACT_ADDRESS = deployment.address;
 export const CUSD_ADDRESS     = deployment.cUSD;
-export const CONTRACT_ABI     = deployment.abi;
+// deployment.abi is human-readable strings — parse into viem ABI objects.
+export const CONTRACT_ABI     = parseAbi(deployment.abi);
 export const MARKET_MAPPINGS  = deployment.marketMappings;
 
 const OUTCOME_ENUM = { yes: 0, no: 1, draw: 2 };
