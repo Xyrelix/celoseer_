@@ -5,7 +5,7 @@ import { claimFaucet } from '../services/api';
 const EXPLORER_TX = (hash) => `https://celo-sepolia.blockscout.com/tx/${hash}`;
 const GAS_FAUCET = 'https://faucet.celo.org/celo-sepolia';
 
-export default function Faucet({ walletAddress, displayAddress, balance, onBack, onClaimed }) {
+export default function Faucet({ walletAddress, displayAddress, balance, celo, onBack, onClaimed }) {
   const [status, setStatus] = useState('idle'); // idle | claiming | done | error
   const [txHash, setTxHash] = useState(null);
   const [error,  setError]  = useState(null);
@@ -45,6 +45,12 @@ export default function Faucet({ walletAddress, displayAddress, balance, onBack,
         </div>
         <div className="pbal-amount">
           {parseFloat(balance || 0).toFixed(2)} <span className="pbal-currency">cUSD</span>
+        </div>
+        <div className="pbal-row">
+          <div className="pbal-item">
+            <span className="pbal-item-label">Gas (CELO)</span>
+            <span className="pbal-item-val">{parseFloat(celo || 0).toFixed(4)}</span>
+          </div>
         </div>
         <div className="pbal-wallet-addr">
           <Icon name="coin" size={13} color="#6b7280" />

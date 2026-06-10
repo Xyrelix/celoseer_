@@ -11,13 +11,14 @@ import Profile      from './components/Profile';
 import Faucet       from './components/Faucet';
 import Icon         from './components/Icon';
 import { useAuth }           from './hooks/useAuth';
-import { useWalletBalance }  from './hooks/useWalletBalance';
+import { useWalletBalance, useNativeBalance } from './hooks/useWalletBalance';
 import { useWelcomeDeposit } from './hooks/useWelcomeDeposit';
 import './styles.css';
 
 function App() {
   const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
   const { balance, refetch: refetchBalance } = useWalletBalance(walletAddress);
+  const { celo, refetch: refetchCelo }       = useNativeBalance(walletAddress);
 
   // Auto-deposit 500 cUSD to every new user, once.
   useWelcomeDeposit(walletAddress, authenticated, refetchBalance);
@@ -123,6 +124,7 @@ function App() {
               walletAddress={walletAddress}
               displayAddress={displayAddress}
               balance={balance}
+              celo={celo}
               positions={portfolio}
               onBack={() => setAppState('main')}
             />
@@ -135,8 +137,9 @@ function App() {
               walletAddress={walletAddress}
               displayAddress={displayAddress}
               balance={balance}
+              celo={celo}
               onBack={() => setAppState('main')}
-              onClaimed={refetchBalance}
+              onClaimed={() => { refetchBalance?.(); refetchCelo?.(); }}
             />
           </div>
         )}

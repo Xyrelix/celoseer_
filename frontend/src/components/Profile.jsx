@@ -19,9 +19,17 @@ function deriveDisplayName(privyUser) {
   );
 }
 
-export default function Profile({ user, walletAddress, displayAddress, balance, positions, onBack }) {
+export default function Profile({ user, walletAddress, displayAddress, balance, celo, positions, onBack }) {
   const { logout } = useAuth();
   const [tab, setTab] = useState('active');
+  const [copied, setCopied] = useState(false);
+
+  const copyAddress = async () => {
+    if (!walletAddress) return;
+    await navigator.clipboard?.writeText(walletAddress);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   const active = positions.filter(p => p.status === 'active');
   const closed  = positions.filter(p => p.status === 'closed');
@@ -84,6 +92,11 @@ export default function Profile({ user, walletAddress, displayAddress, balance, 
         </div>
         <div className="pbal-row">
           <div className="pbal-item">
+            <span className="pbal-item-label">Gas (CELO)</span>
+            <span className="pbal-item-val">{parseFloat(celo || 0).toFixed(4)}</span>
+          </div>
+          <div className="pbal-divider" />
+          <div className="pbal-item">
             <span className="pbal-item-label">Total Staked</span>
             <span className="pbal-item-val staked">{totalStaked.toFixed(2)} cUSD</span>
           </div>
@@ -93,10 +106,12 @@ export default function Profile({ user, walletAddress, displayAddress, balance, 
             <span className="pbal-item-val risk">{totalPotential.toFixed(2)} cUSD</span>
           </div>
         </div>
-        <div className="pbal-wallet-addr">
+        <button className="pbal-wallet-addr" onClick={copyAddress} title="Copy wallet address"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%' }}>
           <Icon name="coin" size={13} color="#6b7280" />
           <span className="pbal-addr-text">{walletAddress || '—'}</span>
-        </div>
+          <Icon name={copied ? 'check' : 'copy'} size={13} color={copied ? '#10b981' : '#6b7280'} />
+        </button>
       </div>
 
       {/* Performance stats */}

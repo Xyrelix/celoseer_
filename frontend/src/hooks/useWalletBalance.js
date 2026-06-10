@@ -1,4 +1,4 @@
-import { useReadContract } from 'wagmi';
+import { useReadContract, useBalance } from 'wagmi';
 import { erc20Abi, formatUnits } from 'viem';
 import { CUSD_ADDRESS, ACTIVE_CHAIN } from '../config/wagmi';
 
@@ -24,5 +24,22 @@ export function useWalletBalance(address) {
     : '0.00';
 
   return { balance: formatted, isLoading: result.isLoading, refetch: result.refetch };
+}
+
+// Native CELO balance — the gas the user needs to send bet transactions.
+export function useNativeBalance(address) {
+  const result = HAS_PRIVY
+    ? useBalance({  // eslint-disable-line react-hooks/rules-of-hooks
+        address: address ?? undefined,
+        chainId: ACTIVE_CHAIN.id,
+        query: { enabled: !!address },
+      })
+    : { data: undefined, isLoading: false, refetch: () => {} };
+
+  const formatted = result.data?.value != null
+    ? parseFloat(formatUnits(result.data.value, 18)).toFixed(4)
+    : '0.0000';
+
+  return { celo: formatted, isLoading: result.isLoading, refetch: result.refetch };
 }
 

@@ -4,18 +4,13 @@ import {
   http,
   parseAbi,
   parseEther,
-  defineChain,
 } from 'viem';
+import { celoSepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 
+// Use viem's built-in Celo Sepolia chain — it carries the Celo-specific
+// transaction formatters/serializers, without which gas estimates come out 0.
 const RPC_URL = process.env.CELO_RPC_URL || 'https://forno.celo-sepolia.celo-testnet.org';
-
-export const celoSepolia = defineChain({
-  id: 11142220,
-  name: 'Celo Sepolia',
-  nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
-  rpcUrls: { default: { http: [RPC_URL] } },
-});
 
 const MOCK_CUSD_ABI = parseAbi([
   'function welcome(address user)',
