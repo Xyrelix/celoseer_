@@ -1,8 +1,8 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import { TEAMS } from '../data/worldCupMatches.js';
 import { log } from '../lib/logger.js';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const LABEL_MAP = [
   { maxDiff: 5,  label: 'EVEN MATCH' },
@@ -26,7 +26,7 @@ export async function getPrediction(team1Code, team2Code, stage = 'group') {
   const team1 = TEAMS[team1Code];
   const team2 = TEAMS[team2Code];
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GROQ_API_KEY) {
     return getMockPrediction(team1Code, team2Code, team1, team2);
   }
 
@@ -51,13 +51,14 @@ Respond ONLY with valid JSON, no explanation outside the JSON:
 Probabilities must sum to exactly 1.0.`;
 
   try {
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+    const message = await client.chat.completions.create({
+      model: 'llama-4-scout-17b-16e-instruct',
+      temperature: 0.7,
       max_tokens: 256,
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const raw = message.content[0].text.trim();
+    const raw = message.choices[0].message.content.trim();
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('No JSON in response');
 
@@ -91,7 +92,7 @@ export async function getTournamentPrediction(teamCode) {
   const team = TEAMS[teamCode];
   if (!team) return null;
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GROQ_API_KEY) {
     return getMockTournamentPrediction(teamCode, team);
   }
 
@@ -112,13 +113,14 @@ Respond ONLY with valid JSON:
 }`;
 
   try {
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
+    const message = await client.chat.completions.create({
+      model: 'llama-4-scout-17b-16e-instruct',
+      temperature: 0.7,
       max_tokens: 256,
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const raw = message.content[0].text.trim();
+    const raw = message.choices[0].message.content.trim();
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('No JSON in response');
 

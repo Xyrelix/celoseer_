@@ -29,8 +29,8 @@ app.listen(PORT, async () => {
   } catch (err) {
     log.error('DB init failed:', err.message);
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    log.warn('ANTHROPIC_API_KEY not set — AI predictions will use mock fallback data');
+  if (!process.env.GROQ_API_KEY) {
+    log.warn('GROQ_API_KEY not set — AI predictions will use mock fallback data');
   }
   startIndexer();  // chain → Turso event indexer
   startResolver(); // autonomous market settlement (no-op unless enabled + configured)
