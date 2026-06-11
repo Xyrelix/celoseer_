@@ -1,40 +1,69 @@
-import { FIXTURES, fixtureToMarketTitle } from '../data/fixtures.js';
 import { publicClient, walletClient, CONTRACT_ADDRESS, MARKET_ABI } from './market.js';
 import { log } from './logger.js';
 
-// Autonomous agent: create on-chain markets for all World Cup 2026 fixtures.
-// Idempotent — only creates if marketCount < expected total.
-// Expected: 26 initial (from CreateMarkets.s.sol) + FIXTURES.length = 26 + ~87 = ~113 total.
+const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
+const BASE_URL = 'https://api.football-data.org/v4';
+const WORLD_CUP_ID = 740; // World Cup 2026
 
-const INITIAL_MARKET_COUNT = 26; // from CreateMarkets.s.sol
-const EXPECTED_TOTAL = INITIAL_MARKET_COUNT + FIXTURES.length;
+// Fetch all World Cup 2026 matches from football-data.org API
+async function fetchWorldCupMatches() {
+  if (!API_KEY) {
+    log.warn('[fixtureCreator] FOOTBALL_DATA_API_KEY not set — cannot fetch fixtures');
+    return [];
+  }
 
+  try {
+    const res = await fetch(`${BASE_URL}/competitions/${WORLD_CUP_ID}/matches`, {
+      headers: { 'X-Auth-Token': API_KEY },
+    });
+
+    if (!res.ok) {
+      log.error(`[fixtureCreator] API error: ${res.status}`);
+      return [];
+    }
+
+    const data = await res.json();
+    return data.matches || [];
+  } catch (err) {
+    log.error('[fixtureCreator] fetch failed:', err.message);
+    return [];
+  }
+}
+
+// Convert API match to market question
+function matchToQuestion(match) {
+  const home = match.homeTeam.name;
+  const away = match.awayTeam.name;
+  const stage = match.stage || 'GROUP';
+  return `${home} vs ${away} (${stage})`;
+}
+
+// Autonomous: fetch live fixtures from API, create markets for new ones
 export async function createFixtures() {
   if (!walletClient || !publicClient || !CONTRACT_ADDRESS) {
     log.warn('[fixtureCreator] not configured (missing key/address)');
     return { created: 0, skipped: 0 };
   }
 
-  const currentCount = Number(await publicClient.readContract({
-    address: CONTRACT_ADDRESS, abi: MARKET_ABI, functionName: 'marketCount',
-  }));
+  log.info('[fixtureCreator] fetching World Cup 2026 matches from football-data.org...');
+  const apiMatches = await fetchWorldCupMatches();
 
-  if (currentCount >= EXPECTED_TOTAL) {
-    log.info(`[fixtureCreator] ${currentCount} markets exist; all fixtures already created`);
-    return { created: 0, skipped: FIXTURES.length };
+  if (apiMatches.length === 0) {
+    log.warn('[fixtureCreator] no matches fetched from API');
+    return { created: 0, skipped: 0 };
   }
 
-  log.info(`[fixtureCreator] creating ${FIXTURES.length} fixture markets (from #${currentCount})`);
+  log.info(`[fixtureCreator] found ${apiMatches.length} matches, creating markets...`);
 
   let created = 0;
-  for (let i = 0; i < FIXTURES.length; i++) {
-    const fixture = FIXTURES[i];
+  for (let i = 0; i < apiMatches.length; i++) {
+    const match = apiMatches[i];
     try {
-      const question = fixtureToMarketTitle(fixture);
-      const closeTime = Math.floor(new Date(fixture.date).getTime() / 1000);
-      const hasDraw = fixture.stage === 'group'; // only group matches can draw
+      const question = matchToQuestion(match);
+      const closeTime = Math.floor(new Date(match.utcDate).getTime() / 1000);
+      const hasDraw = match.stage?.toLowerCase().includes('group') !== false; // group matches allow draws
 
-      log.info(`[fixtureCreator] creating market ${i + 1}/${FIXTURES.length}: ${question.slice(0, 50)}...`);
+      log.info(`[fixtureCreator] creating market ${i + 1}/${apiMatches.length}: ${question.slice(0, 50)}...`);
 
       const txHash = await walletClient.writeContract({
         address: CONTRACT_ADDRESS,
@@ -43,24 +72,26 @@ export async function createFixtures() {
         args: [question, BigInt(closeTime), hasDraw],
       });
 
-      // Wait for confirmation with extended timeout (testnet can be slow)
       await publicClient.waitForTransactionReceipt({
         hash: txHash,
-        timeout: 90_000, // 90 seconds max per market
-        pollingInterval: 2_000, // poll every 2 seconds
+        timeout: 90_000,
+        pollingInterval: 2_000,
       });
       created++;
 
-      // Brief pause between transactions to avoid overwhelming RPC
-      if (i < FIXTURES.length - 1) {
+      if (i < apiMatches.length - 1) {
         await new Promise(r => setTimeout(r, 500));
       }
     } catch (err) {
-      log.warn(`[fixtureCreator] market ${i + 1} failed (continuing): ${err.shortMessage || err.message}`);
-      // Continue trying the rest — don't fail the whole creator
+      // Likely "market already exists" — that's fine
+      if (err.message?.includes('already exists') || err.message?.includes('CREATE_MARKET_ALREADY_EXISTS')) {
+        log.info(`[fixtureCreator] market ${i + 1} already exists (skipping)`);
+      } else {
+        log.warn(`[fixtureCreator] market ${i + 1} error: ${err.shortMessage || err.message}`);
+      }
     }
   }
 
-  log.info(`[fixtureCreator] finished: created ${created}/${FIXTURES.length} fixtures`);
-  return { created, skipped: FIXTURES.length - created };
+  log.info(`[fixtureCreator] finished: created ${created}/${apiMatches.length} new markets`);
+  return { created, skipped: apiMatches.length - created };
 }
