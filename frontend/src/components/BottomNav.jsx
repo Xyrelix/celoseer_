@@ -7,7 +7,7 @@ const TABS = [
   { id: 'insights',  label: 'Insights',  icon: 'insights' },
 ];
 
-export default function BottomNav({ activeTab, onTabChange }) {
+export default function BottomNav({ activeTab, onTabChange, onPositions }) {
   return (
     <nav className="bottom-nav">
       {TABS.map(tab => (
@@ -22,6 +22,18 @@ export default function BottomNav({ activeTab, onTabChange }) {
           <span className="bnav-label">{tab.label}</span>
         </button>
       ))}
+      {onPositions && (
+        <button
+          className="bnav-item bnav-positions"
+          onClick={onPositions}
+          title="My Positions"
+        >
+          <span className="bnav-icon-wrap">
+            <Icon name="target" size={22} className="bnav-icon" />
+          </span>
+          <span className="bnav-label">Positions</span>
+        </button>
+      )}
     </nav>
   );
 }

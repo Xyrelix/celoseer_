@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { placeBet, getUserBets } from '../controllers/betsController.js';
+import { getUserBets } from '../controllers/betsController.js';
 
 const router = Router();
 
-router.post('/', placeBet);
+// Bets are recorded on-chain and indexed into Turso; these are read-only.
 router.get('/me', getUserBets);
 router.get('/user/:address', getUserBets);
 

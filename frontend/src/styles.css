@@ -3116,6 +3116,8 @@ button:active::after {
   border-radius: 10px;
 }
 
+.bnav-positions { border-left: 1px solid rgba(255, 215, 0, 0.15); }
+
 .bnav-icon-wrap {
   width: 32px;
   height: 28px;
@@ -5580,6 +5582,7 @@ button:active::after {
 }
 
 /* ============================================
+<<<<<<< HEAD
    PLACE WAGER PAGE
    ============================================ */
 
@@ -5942,4 +5945,57 @@ button:active::after {
 
 .fixture-row--clickable:hover .fixture-wager-cta {
   opacity: 1;
+=======
+   PROFILE → POSITIONS LINK
+   ============================================ */
+.prof-positions-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-card, 16px);
+  cursor: pointer;
+  text-align: left;
+}
+.prof-positions-link .ppl-left { display: flex; align-items: center; gap: 12px; }
+.prof-positions-link .ppl-text { display: flex; flex-direction: column; }
+.prof-positions-link .ppl-title { color: #fff; font-weight: 600; font-size: 0.9rem; }
+.prof-positions-link .ppl-sub { color: #9ca3af; font-size: 0.78rem; }
+.prof-positions-link .ppl-chevron { transform: rotate(180deg); }
+
+/* ============================================
+   DESKTOP / WIDE-SCREEN LAYOUT
+   The app is mobile-first; on wide screens widen the shell and lay markets
+   out in a responsive grid instead of one narrow phone-width column.
+   ============================================ */
+@media (min-width: 900px) {
+  .app-container { max-width: 1120px; }
+
+  .top-bar { max-width: 1120px; margin: 0 auto; }
+
+  /* markets in a multi-column grid */
+  .markets-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 18px;
+    padding: 18px 24px 0;
+    align-items: start;
+  }
+
+  /* keep the bottom nav a comfortable centered width, not full desktop width */
+  .bottom-nav { max-width: 560px; }
+
+  /* let other pages breathe a bit on desktop */
+  .predict-tab,
+  .home-tab,
+  .standings-tab,
+  .insights-tab { max-width: 1120px; margin: 0 auto; }
+}
+
+@media (min-width: 1280px) {
+  .app-container,
+  .top-bar { max-width: 1240px; }
+  .markets-container { grid-template-columns: repeat(3, 1fr); }
+>>>>>>> 4f9e7dc31679eedb7ace9d5d37214adaf29c8454
 }

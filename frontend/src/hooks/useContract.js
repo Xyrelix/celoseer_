@@ -1,12 +1,13 @@
 import { useWriteContract, useReadContract } from 'wagmi';
-import { parseEther, erc20Abi } from 'viem';
+import { parseEther, erc20Abi, parseAbi } from 'viem';
 import { useState } from 'react';
 import deployment from '../contracts/deployment.js';
 import { ACTIVE_CHAIN } from '../config/wagmi';
 
 export const CONTRACT_ADDRESS = deployment.address;
 export const CUSD_ADDRESS     = deployment.cUSD;
-export const CONTRACT_ABI     = deployment.abi;
+// deployment.abi is human-readable strings — parse into viem ABI objects.
+export const CONTRACT_ABI     = parseAbi(deployment.abi);
 export const MARKET_MAPPINGS  = deployment.marketMappings;
 
 const OUTCOME_ENUM = { yes: 0, no: 1, draw: 2 };
@@ -63,6 +64,37 @@ export function usePlaceBetOnChain() {
   return { placeBet, stage, error, reset, isContractReady: !!CONTRACT_ADDRESS };
 }
 
+// ─── Claim winnings / refund ─────────────────────────────────────────────────
+
+export function useClaim() {
+  const [claimingId, setClaimingId] = useState(null);
+  const [error, setError] = useState(null);
+  const { writeContractAsync } = useWriteContract();
+
+  // type: 'winnings' (resolved + won) | 'refund' (cancelled market)
+  const claim = async (onChainId, type = 'winnings') => {
+    setError(null);
+    setClaimingId(onChainId);
+    try {
+      const functionName = type === 'refund' ? 'claimRefund' : 'claimWinnings';
+      const tx = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName,
+        args: [BigInt(onChainId)],
+      });
+      return tx;
+    } catch (err) {
+      setError(err.shortMessage ?? err.message);
+      throw err;
+    } finally {
+      setClaimingId(null);
+    }
+  };
+
+  return { claim, claimingId, error };
+}
+
 // ─── Read live on-chain odds ─────────────────────────────────────────────────
 
 export function useOnChainOdds(backendMarketId) {
@@ -77,8 +109,10 @@ export function useOnChainOdds(backendMarketId) {
     chainId: ACTIVE_CHAIN.id,
     query: {
       enabled,
-      // odds shift as pools fill — keep them reasonably fresh
-      refetchInterval: 15_000,
+      // odds shift as pools fill — refresh periodically, but not so often we
+      // trip the public RPC's rate limit (403s on forno).
+      refetchInterval: 60_000,
+      refetchOnWindowFocus: false,
     },
   });
 

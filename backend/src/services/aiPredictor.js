@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { TEAMS } from '../data/worldCupMatches.js';
+import { log } from '../lib/logger.js';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -78,7 +79,7 @@ Probabilities must sum to exactly 1.0.`;
     predictionCache.set(cacheKey, result);
     return result;
   } catch (err) {
-    console.error('AI prediction failed, using fallback:', err.message);
+    log.error('AI prediction failed, using fallback:', err.message);
     return getMockPrediction(team1Code, team2Code, team1, team2);
   }
 }
@@ -136,7 +137,7 @@ Respond ONLY with valid JSON:
     predictionCache.set(cacheKey, result);
     return result;
   } catch (err) {
-    console.error('Tournament prediction failed:', err.message);
+    log.error('Tournament prediction failed:', err.message);
     return getMockTournamentPrediction(teamCode, team);
   }
 }
