@@ -6,8 +6,9 @@ import HomeTab      from './components/HomeTab';
 import StandingsTab from './components/StandingsTab';
 import PredictTab   from './components/PredictTab';
 import InsightsTab  from './components/InsightsTab';
-import OddsSlip     from './components/OddsSlip';
-import Profile      from './components/Profile';
+import OddsSlip        from './components/OddsSlip';
+import Profile         from './components/Profile';
+import PlaceWagerPage  from './components/PlaceWagerPage';
 import Icon         from './components/Icon';
 import { useAuth }          from './hooks/useAuth';
 import { useWalletBalance } from './hooks/useWalletBalance';
@@ -17,14 +18,30 @@ function App() {
   const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
   const { balance, refetch: refetchBalance } = useWalletBalance(walletAddress);
 
-  const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile'
-  const [activeTab,      setActiveTab]      = useState('home');
-  const [selectedMarket, setSelectedMarket] = useState(null);
-  const [portfolio,      setPortfolio]      = useState([]);
+  const [appState,        setAppState]        = useState('main'); // 'main' | 'odds' | 'profile' | 'wager'
+  const [activeTab,       setActiveTab]       = useState('home');
+  const [selectedMarket,  setSelectedMarket]  = useState(null);
+  const [selectedFixture, setSelectedFixture] = useState(null);
+  const [portfolio,       setPortfolio]       = useState([]);
 
   const handleMarketSelect = (market) => {
     setSelectedMarket(market);
     setAppState('odds');
+  };
+
+  const handleFixtureSelect = (fixture) => {
+    setSelectedFixture(fixture);
+    setAppState('wager');
+  };
+
+  const handleWagerSubmit = (betData) => {
+    setPortfolio(prev => [
+      ...prev,
+      { id: Date.now(), ...betData, timestamp: new Date().toLocaleString(), status: 'active' },
+    ]);
+    refetchBalance?.();
+    setAppState('main');
+    setActiveTab('home');
   };
 
   const handleOddsSubmit = (betData) => {
@@ -42,7 +59,7 @@ function App() {
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'home':      return <HomeTab      key="home"      onSelectMarket={handleMarketSelect} user={user} />;
+      case 'home':      return <HomeTab      key="home"      onSelectMarket={handleMarketSelect} onFixtureSelect={handleFixtureSelect} user={user} />;
       case 'standings': return <StandingsTab key="standings" />;
       case 'predict':   return <PredictTab   key="predict"   onSelectMarket={handleMarketSelect} />;
       case 'insights':  return <InsightsTab  key="insights"  />;
@@ -98,6 +115,18 @@ function App() {
               walletAddress={walletAddress}
               walletBalance={parseFloat(balance)}
               onSubmit={handleOddsSubmit}
+              onBack={() => setAppState('main')}
+            />
+          </div>
+        )}
+
+        {appState === 'wager' && selectedFixture && (
+          <div className="page-slide-in">
+            <PlaceWagerPage
+              fixture={selectedFixture}
+              walletAddress={walletAddress}
+              walletBalance={parseFloat(balance)}
+              onSubmit={handleWagerSubmit}
               onBack={() => setAppState('main')}
             />
           </div>

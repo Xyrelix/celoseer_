@@ -245,7 +245,7 @@ function HighlightCard({ hl, isActive, onActivate, onPause }) {
 /* ─────────────────────────────────────────────────────────────────────────────
    HomeTab
    ───────────────────────────────────────────────────────────────────────────── */
-export default function HomeTab({ onSelectMarket }) {
+export default function HomeTab({ onSelectMarket, onFixtureSelect }) {
   const [slideIdx,   setSlideIdx]   = useState(0);
   const [activeIdx,  setActiveIdx]  = useState(null); // which highlight is playing
   const timerRef = useRef(null);
@@ -362,7 +362,14 @@ export default function HomeTab({ onSelectMarket }) {
         </div>
         <div className="fixtures-list">
           {FIXTURES.map((f, i) => (
-            <div key={i} className="fixture-row glass-market" style={{ animationDelay: `${i * 0.06}s` }} onMouseMove={tilt} onMouseLeave={untilt}>
+            <div
+              key={i}
+              className="fixture-row fixture-row--clickable glass-market"
+              style={{ animationDelay: `${i * 0.06}s` }}
+              onMouseMove={tilt}
+              onMouseLeave={untilt}
+              onClick={() => onFixtureSelect?.(f)}
+            >
               <div className="fix-date">
                 <span className="fix-day">{f.date}</span>
                 <span className="fix-time">{f.time}</span>
@@ -381,6 +388,10 @@ export default function HomeTab({ onSelectMarket }) {
               <div className="fix-venue">
                 <Icon name="globe" size={12} color="#9ca3af" />
                 <span>{f.venue}</span>
+              </div>
+              <div className="fixture-wager-cta">
+                <span>Place Wager</span>
+                <Icon name="back" size={11} color="#ffd700" className="icon-flip" />
               </div>
             </div>
           ))}

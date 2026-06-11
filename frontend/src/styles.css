@@ -5578,3 +5578,368 @@ button:active::after {
   border: 1px solid rgba(245, 158, 11, 0.4);
   color: #f59e0b;
 }
+
+/* ============================================
+   PLACE WAGER PAGE
+   ============================================ */
+
+.wager-page {
+  padding: 16px 16px 80px;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, rgba(255, 215, 0, 0.04) 0%, transparent 50%);
+}
+
+/* Fixture banner */
+.wager-fixture-banner {
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.wager-fix-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.wager-fix-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #4b5563;
+  flex-shrink: 0;
+}
+
+.wager-fix-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.wager-team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.wager-team--right {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.wager-team-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f3f4f6;
+}
+
+.wager-flag {
+  width: 30px;
+  height: 20px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.wager-vs {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #6b7280;
+  letter-spacing: 1px;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.wager-venue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+/* Wager sections */
+.wager-section {
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.wager-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.wager-section-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.wager-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  flex: 1;
+}
+
+.wager-section-badge {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* 3-column pick buttons (result / first team) */
+.wager-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.wager-pick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  color: #d1d5db;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.wager-pick-btn:hover {
+  background: rgba(255, 215, 0, 0.06);
+  border-color: rgba(255, 215, 0, 0.25);
+}
+
+.wager-pick-btn--active {
+  background: rgba(255, 215, 0, 0.12) !important;
+  border-color: rgba(255, 215, 0, 0.55) !important;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.15);
+}
+
+.wager-pick-flag {
+  width: 32px;
+  height: 22px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.wager-pick-draw-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  display: block;
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.wager-pick-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #e5e7eb;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.wager-pick-odds {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+/* Chip grid (goals / cards) */
+.wager-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wager-chips--grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.wager-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  color: #d1d5db;
+  cursor: pointer;
+  flex: 1;
+  min-width: 72px;
+  transition: all 0.2s ease;
+}
+
+.wager-chip:hover {
+  background: rgba(255, 215, 0, 0.06);
+  border-color: rgba(255, 215, 0, 0.25);
+}
+
+.wager-chip--active {
+  background: rgba(255, 215, 0, 0.12) !important;
+  border-color: rgba(255, 215, 0, 0.55) !important;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+}
+
+.wager-chip-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e5e7eb;
+  white-space: nowrap;
+}
+
+.wager-chip-odds {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+/* First goalscorer text input */
+.wager-text-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.wager-text-input {
+  width: 100%;
+  padding: 12px 40px 12px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #f3f4f6;
+}
+
+.wager-input-check {
+  position: absolute;
+  right: 14px;
+  font-size: 0.9rem;
+  color: #22c55e;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.wager-field-hint {
+  font-size: 0.7rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Bet slip summary */
+.wager-slip-summary {
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.wager-slip-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f3f4f6;
+}
+
+.wager-slip-count {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.wager-slip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 0.82rem;
+}
+
+.wager-slip-row--total {
+  padding-top: 8px;
+}
+
+.wager-slip-label {
+  color: #9ca3af;
+  flex: 1;
+  padding-right: 8px;
+}
+
+.wager-slip-odds {
+  color: #f3f4f6;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.wager-slip-odds--total {
+  color: #ffd700;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* Wager amount card */
+.wager-amount-card {
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.wager-payout-preview {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+}
+
+/* Make fixture rows clickable */
+.fixture-row--clickable {
+  cursor: pointer;
+}
+
+.fixture-row--clickable:hover .fix-match {
+  opacity: 0.9;
+}
+
+.fixture-wager-cta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.fixture-row--clickable:hover .fixture-wager-cta {
+  opacity: 1;
+}
