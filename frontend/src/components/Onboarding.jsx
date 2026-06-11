@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useLogin } from '@privy-io/react-auth';
 import Icon from './Icon';
-import { useAuth } from '../hooks/useAuth';
 
 const WC_IMAGES = [
   { url: '/wc1.jpg',        type: 'image' },
@@ -47,8 +47,8 @@ const LANGUAGES = {
 const LANG_KEYS = ['en', 'es', 'fr', 'pt', 'de', 'ar', 'it', 'zh', 'ja', 'ko', 'nl', 'tr', 'pl', 'ru', 'hi', 'sw'];
 
 export default function Onboarding({ privyReady = false }) {
-  const { login } = useAuth();
   const [loading,        setLoading]        = useState(false);
+  const [loginError,     setLoginError]     = useState(null);
   const [imgIndex,       setImgIndex]       = useState(0);
   const [prevImgIndex,   setPrevImgIndex]   = useState(null);
   const [lang,           setLang]           = useState('en');
@@ -60,6 +60,20 @@ export default function Onboarding({ privyReady = false }) {
   const [twPhase,   setTwPhase]   = useState('typing');
 
   const t = LANGUAGES[lang];
+
+  // Drive login through Privy's callbacks so the UI reflects real state
+  // (and surfaces failures like the CORS/422 instead of silently resetting).
+  const { login } = useLogin({
+    onComplete: () => { setLoading(false); setLoginError(null); },
+    onError: (err) => {
+      setLoading(false);
+      // user closing the modal isn't a real error
+      if (err !== 'exited_auth_flow' && err !== 'user_exited_auth_flow') {
+        setLoginError('Login failed — please try again.');
+        console.warn('Privy login error:', err);
+      }
+    },
+  });
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -89,11 +103,9 @@ export default function Onboarding({ privyReady = false }) {
   }, [twPos, twPhase, twIdx]);
 
   const handleGetStarted = () => {
+    setLoginError(null);
     setLoading(true);
-    login();
-    /* Privy's modal takes over; when user completes it, App detects authenticated=true */
-    /* Reset loading after a moment in case user dismisses the modal */
-    setTimeout(() => setLoading(false), 3000);
+    login(); // onComplete / onError above reset loading
   };
 
   const goToSlide = (i) => { setPrevImgIndex(imgIndex); setImgIndex(i); };
@@ -181,6 +193,11 @@ export default function Onboarding({ privyReady = false }) {
                 ? <span className="ob-loading-row"><span className="ob-spin" />Loading...</span>
                 : t.continue}
             </button>
+            {loginError && (
+              <p className="start-copy" style={{ color: '#ef4444', marginTop: 10, fontSize: '0.82rem' }}>
+                {loginError}
+              </p>
+            )}
           </div>
         </div>
 

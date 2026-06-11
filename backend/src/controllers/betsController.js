@@ -27,26 +27,36 @@ export async function placeBet(req, res) {
     const walletAddress = req.headers['x-wallet-address'];
     if (!walletAddress) return res.status(401).json({ error: 'Wallet address required' });
 
-    const { marketId, outcome, amount, txHash } = req.body;
-    if (!marketId || !outcome || !amount) {
+    // Accept `outcome` (current) or `prediction` (older frontend builds).
+    const { marketId, amount, txHash } = req.body;
+    const outcome = req.body.outcome ?? req.body.prediction;
+    const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount;
+    const bodyOdds  = typeof req.body.odds === 'string' ? parseFloat(req.body.odds) : req.body.odds;
+
+    if (marketId == null || !outcome || amountNum == null) {
       return res.status(400).json({ error: 'marketId, outcome, and amount are required' });
     }
-    if (typeof amount !== 'number' || amount <= 0) {
+    if (typeof amountNum !== 'number' || Number.isNaN(amountNum) || amountNum <= 0) {
       return res.status(400).json({ error: 'amount must be a positive number' });
     }
     if (!['yes', 'no', 'draw'].includes(outcome)) {
       return res.status(400).json({ error: 'outcome must be yes, no, or draw' });
     }
 
-    const market = await getMarketById(marketId);
-    if (!market) return res.status(404).json({ error: 'Market not found' });
+    // The frontend's market IDs don't always line up with the backend catalog,
+    // so trust the title/odds the client displayed; fall back to a lookup.
+    const market = await getMarketById(marketId).catch(() => null);
+    const oddsMap = market
+      ? { yes: market.yesOdds, no: market.noOdds, draw: market.drawOdds ?? null }
+      : {};
+    const odds = oddsMap[outcome] ?? bodyOdds;
+    if (!odds || odds <= 0) {
+      return res.status(400).json({ error: 'odds required (none on record or provided)' });
+    }
+    const marketTitle = market?.title ?? req.body.marketTitle ?? `Market ${marketId}`;
 
-    const oddsMap = { yes: market.yesOdds, no: market.noOdds, draw: market.drawOdds ?? null };
-    const odds = oddsMap[outcome];
-    if (!odds) return res.status(400).json({ error: `No ${outcome} odds for this market` });
-
-    const potentialWin = +(amount * odds).toFixed(4);
-    const profit = +((amount * odds) - amount).toFixed(4);
+    const potentialWin = +(amountNum * odds).toFixed(4);
+    const profit = +((amountNum * odds) - amountNum).toFixed(4);
 
     const result = await db.execute({
       sql: `INSERT INTO bets
@@ -56,9 +66,9 @@ export async function placeBet(req, res) {
       args: [
         walletAddress.toLowerCase(),
         marketId,
-        market.title,
+        marketTitle,
         outcome,
-        amount,
+        amountNum,
         odds,
         potentialWin,
         profit,

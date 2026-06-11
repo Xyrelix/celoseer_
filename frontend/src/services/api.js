@@ -21,11 +21,11 @@ export function fetchMarket(id) {
   return request(`/api/markets/${id}`);
 }
 
-export function placeBet({ marketId, outcome, amount, txHash }, walletAddress) {
+export function placeBet({ marketId, outcome, amount, txHash, marketTitle, odds }, walletAddress) {
   return request('/api/bets', {
     method: 'POST',
     headers: { 'x-wallet-address': walletAddress },
-    body: JSON.stringify({ marketId, outcome, amount, txHash }),
+    body: JSON.stringify({ marketId, outcome, amount, txHash, marketTitle, odds }),
   });
 }
 

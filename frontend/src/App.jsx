@@ -68,7 +68,14 @@ function App() {
     // Persist the bet to the backend so it survives reloads.
     try {
       await apiPlaceBet(
-        { marketId: betData.marketId, outcome: betData.prediction, amount: betData.amount, txHash: betData.txHash },
+        {
+          marketId:    betData.marketId,
+          outcome:     betData.prediction,
+          amount:      betData.amount,
+          txHash:      betData.txHash,
+          marketTitle: betData.marketTitle,
+          odds:        betData.odds,
+        },
         walletAddress,
       );
     } catch (err) {
