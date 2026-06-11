@@ -125,7 +125,7 @@ function App() {
               </div>
             </main>
 
-            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} onPositions={() => setAppState('positions')} />
           </div>
         )}
 

@@ -3116,6 +3116,8 @@ button:active::after {
   border-radius: 10px;
 }
 
+.bnav-positions { border-left: 1px solid rgba(255, 215, 0, 0.15); }
+
 .bnav-icon-wrap {
   width: 32px;
   height: 28px;
