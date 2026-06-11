@@ -8,13 +8,13 @@ import PredictTab   from './components/PredictTab';
 import InsightsTab  from './components/InsightsTab';
 import OddsSlip     from './components/OddsSlip';
 import Profile      from './components/Profile';
+import Positions    from './components/Positions';
 import Faucet       from './components/Faucet';
 import Icon         from './components/Icon';
 import { useAuth }           from './hooks/useAuth';
 import { useWalletBalance, useNativeBalance } from './hooks/useWalletBalance';
 import { useWelcomeDeposit } from './hooks/useWelcomeDeposit';
 import { useOnChainBets } from './hooks/useOnChainBets';
-import { placeBet as apiPlaceBet } from './services/api';
 import './styles.css';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
   // Auto-deposit 500 cUSD to every new user, once.
   useWelcomeDeposit(walletAddress, authenticated, refetchBalance);
 
-  const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile' | 'faucet'
+  const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile' | 'faucet' | 'positions'
   const [activeTab,      setActiveTab]      = useState('home');
   const [selectedMarket, setSelectedMarket] = useState(null);
 
@@ -95,6 +95,14 @@ function App() {
               <div className="top-bar-right">
                 <button
                   className="profile-icon-btn"
+                  onClick={() => setAppState('positions')}
+                  aria-label="My Positions"
+                  title="My positions"
+                >
+                  <Icon name="target" size={22} color="#ffd700" />
+                </button>
+                <button
+                  className="profile-icon-btn"
                   onClick={() => setAppState('faucet')}
                   aria-label="Test Faucet"
                   title="Claim test cUSD"
@@ -141,6 +149,16 @@ function App() {
               displayAddress={displayAddress}
               balance={balance}
               celo={celo}
+              positions={positions}
+              onViewPositions={() => setAppState('positions')}
+              onBack={() => setAppState('main')}
+            />
+          </div>
+        )}
+
+        {appState === 'positions' && (
+          <div className="page-slide-in">
+            <Positions
               positions={positions}
               onRefresh={() => { refetchBets?.(); refetchBalance?.(); }}
               onBack={() => setAppState('main')}

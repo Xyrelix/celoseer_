@@ -29,5 +29,39 @@ export async function initDb() {
     )
   `);
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_bets_wallet ON bets(wallet_address)`);
+
+  // ── Chain-indexed read model (populated from contract events) ──────────────
+  // Market catalog, built from MarketCreated / MarketResolved events.
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS markets (
+      id         INTEGER PRIMARY KEY,   -- on-chain market id
+      question   TEXT,
+      close_time INTEGER,
+      has_draw   INTEGER DEFAULT 0,
+      status     INTEGER DEFAULT 0,     -- 0 OPEN, 1 RESOLVED, 2 CANCELLED
+      result     INTEGER                -- winning outcome once resolved
+    )
+  `);
+
+  // Every BetPlaced event, deduped by (tx_hash, log_index).
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS bet_events (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      market_id    INTEGER NOT NULL,
+      bettor       TEXT    NOT NULL,
+      outcome      INTEGER NOT NULL,    -- 0 yes, 1 no, 2 draw
+      amount       TEXT    NOT NULL,    -- wei as string
+      tx_hash      TEXT    NOT NULL,
+      log_index    INTEGER NOT NULL,
+      block_number INTEGER NOT NULL,
+      created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(tx_hash, log_index)
+    )
+  `);
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_bet_events_bettor ON bet_events(bettor)`);
+
+  // Indexer cursor (last fully-scanned block, etc).
+  await db.execute(`CREATE TABLE IF NOT EXISTS indexer_state (key TEXT PRIMARY KEY, value TEXT)`);
+
   initialized = true;
 }

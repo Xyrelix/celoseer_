@@ -4,7 +4,7 @@ import cors from 'cors';
 import apiRoutes from './routes/api.js';
 import { initDb } from './lib/db.js';
 import { log, requestLogger } from './lib/logger.js';
-import { startResolver } from './lib/scheduler.js';
+import { startResolver, startIndexer } from './lib/scheduler.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -32,5 +32,6 @@ app.listen(PORT, async () => {
   if (!process.env.ANTHROPIC_API_KEY) {
     log.warn('ANTHROPIC_API_KEY not set — AI predictions will use mock fallback data');
   }
+  startIndexer();  // chain → Turso event indexer
   startResolver(); // autonomous market settlement (no-op unless enabled + configured)
 });
