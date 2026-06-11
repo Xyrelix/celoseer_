@@ -6,11 +6,42 @@ import { log } from './logger.js';
 
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const BASE_URL = 'https://api.football-data.org/v4';
-const WORLD_CUP_ID = 740; // World Cup 2026 competition ID
 
-// Cache match results (30 min TTL)
+// Cache match results (30 min TTL) + competition ID (6 hour TTL)
 const matchCache = new Map();
 const CACHE_TTL = 30 * 60 * 1000;
+let worldCupIdCache = null;
+let worldCupIdCacheTime = 0;
+
+// Find World Cup 2026 competition ID
+async function getWorldCupId() {
+  if (worldCupIdCache && Date.now() - worldCupIdCacheTime < 6 * 60 * 60 * 1000) {
+    return worldCupIdCache;
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/competitions`, {
+      headers: { 'X-Auth-Token': API_KEY },
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const wc = data.competitions?.find(c =>
+      c.name?.includes('World Cup') && c.name?.includes('2026')
+    );
+
+    if (wc) {
+      worldCupIdCache = wc.id;
+      worldCupIdCacheTime = Date.now();
+      return wc.id;
+    }
+  } catch (err) {
+    log.warn('[sportsApi] could not find World Cup ID:', err.message);
+  }
+
+  return null;
+}
 
 export async function getMatchResult(homeTeam, awayTeam, matchDate) {
   if (!API_KEY) {
@@ -25,8 +56,14 @@ export async function getMatchResult(homeTeam, awayTeam, matchDate) {
   }
 
   try {
+    const wcId = await getWorldCupId();
+    if (!wcId) {
+      log.warn('[sportsApi] could not find World Cup 2026 competition ID');
+      return null;
+    }
+
     // Get all World Cup 2026 matches
-    const res = await fetch(`${BASE_URL}/competitions/${WORLD_CUP_ID}/matches`, {
+    const res = await fetch(`${BASE_URL}/competitions/${wcId}/matches`, {
       headers: { 'X-Auth-Token': API_KEY },
     });
 

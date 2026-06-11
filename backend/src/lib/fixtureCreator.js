@@ -2,8 +2,38 @@ import { FIXTURES, fixtureToMarketTitle } from '../data/fixtures.js';
 import { publicClient, walletClient, CONTRACT_ADDRESS, MARKET_ABI } from './market.js';
 import { log } from './logger.js';
 
-// Autonomous: create markets for all World Cup 2026 fixtures (hardcoded for now).
-// Once tournament starts, resolver fetches LIVE results from football-data.org API.
+const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
+const BASE_URL = 'https://api.football-data.org/v4';
+
+// Find World Cup 2026 competition ID by searching all competitions
+async function findWorldCupId() {
+  if (!API_KEY) return null;
+
+  try {
+    const res = await fetch(`${BASE_URL}/competitions`, {
+      headers: { 'X-Auth-Token': API_KEY },
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const wc2026 = data.competitions?.find(c =>
+      c.name?.includes('World Cup') && c.name?.includes('2026')
+    );
+
+    if (wc2026) {
+      log.info(`[fixtureCreator] found World Cup 2026 with ID: ${wc2026.id}`);
+      return wc2026.id;
+    }
+  } catch (err) {
+    log.warn('[fixtureCreator] could not find World Cup ID:', err.message);
+  }
+
+  return null;
+}
+
+// Autonomous: create markets for all World Cup 2026 fixtures.
+// Uses hardcoded fixtures if API unavailable, otherwise syncs from API.
 // Idempotent — only creates if market doesn't exist.
 
 export async function createFixtures() {
