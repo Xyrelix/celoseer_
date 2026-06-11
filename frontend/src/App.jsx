@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Onboarding   from './components/Onboarding';
 import BackgroundFX from './components/BackgroundFX';
 import BottomNav    from './components/BottomNav';
@@ -13,30 +13,17 @@ import Icon         from './components/Icon';
 import { useAuth }           from './hooks/useAuth';
 import { useWalletBalance, useNativeBalance } from './hooks/useWalletBalance';
 import { useWelcomeDeposit } from './hooks/useWelcomeDeposit';
-import { placeBet as apiPlaceBet, fetchMyBets } from './services/api';
+import { useOnChainBets } from './hooks/useOnChainBets';
+import { placeBet as apiPlaceBet } from './services/api';
 import './styles.css';
-
-// Map a backend bet record onto the shape Profile expects.
-function normalizeBet(b) {
-  return {
-    id:               b.id,
-    marketId:         b.marketId,
-    marketTitle:      b.marketTitle,
-    prediction:       b.outcome,
-    amount:           b.amount,
-    odds:             b.odds,
-    potentialPayout:  b.potentialWin,
-    potentialProfit:  b.profit,
-    timestamp:        new Date(b.timestamp).toLocaleString(),
-    status:           b.status,
-    result:           b.result,
-  };
-}
 
 function App() {
   const { ready, authenticated, user, walletAddress, displayAddress } = useAuth();
   const { balance, refetch: refetchBalance } = useWalletBalance(walletAddress);
   const { celo, refetch: refetchCelo }       = useNativeBalance(walletAddress);
+
+  // Positions come straight from the contract — the source of truth.
+  const { positions, refetch: refetchBets } = useOnChainBets(walletAddress);
 
   // Auto-deposit 500 cUSD to every new user, once.
   useWelcomeDeposit(walletAddress, authenticated, refetchBalance);
@@ -44,20 +31,6 @@ function App() {
   const [appState,       setAppState]       = useState('main'); // 'main' | 'odds' | 'profile' | 'faucet'
   const [activeTab,      setActiveTab]      = useState('home');
   const [selectedMarket, setSelectedMarket] = useState(null);
-  const [portfolio,      setPortfolio]      = useState([]);
-
-  // Load this wallet's bets from the backend.
-  const loadBets = useCallback(async () => {
-    if (!walletAddress) { setPortfolio([]); return; }
-    try {
-      const { bets } = await fetchMyBets(walletAddress);
-      setPortfolio(bets.map(normalizeBet));
-    } catch (err) {
-      console.warn('failed to load bets:', err.message);
-    }
-  }, [walletAddress]);
-
-  useEffect(() => { loadBets(); }, [loadBets]);
 
   const handleMarketSelect = (market) => {
     setSelectedMarket(market);
@@ -65,25 +38,24 @@ function App() {
   };
 
   const handleOddsSubmit = async (betData) => {
-    // Persist the bet to the backend so it survives reloads.
-    try {
-      await apiPlaceBet(
-        {
-          marketId:    betData.marketId,
-          outcome:     betData.prediction,
-          amount:      betData.amount,
-          txHash:      betData.txHash,
-          marketTitle: betData.marketTitle,
-          odds:        betData.odds,
-        },
-        walletAddress,
-      );
-    } catch (err) {
-      console.warn('failed to save bet:', err.message);
-    }
-    await loadBets();
-    // bet just spent cUSD on-chain — pull the fresh balance
+    // Bet is already on-chain; mirror it to the backend best-effort (history
+    // /analytics only — the UI reads positions from the chain, so a failure
+    // here never blocks anything).
+    apiPlaceBet(
+      {
+        marketId:    betData.marketId,
+        outcome:     betData.prediction,
+        amount:      betData.amount,
+        txHash:      betData.txHash,
+        marketTitle: betData.marketTitle,
+        odds:        betData.odds,
+      },
+      walletAddress,
+    ).catch(err => console.warn('backend bet log failed (non-fatal):', err.message));
+
+    // refresh the on-chain view + balance after the tx
     refetchBalance?.();
+    refetchBets?.();
     setAppState('main');
     setActiveTab('predict');
   };
@@ -169,7 +141,8 @@ function App() {
               displayAddress={displayAddress}
               balance={balance}
               celo={celo}
-              positions={portfolio}
+              positions={positions}
+              onRefresh={() => { refetchBets?.(); refetchBalance?.(); }}
               onBack={() => setAppState('main')}
             />
           </div>

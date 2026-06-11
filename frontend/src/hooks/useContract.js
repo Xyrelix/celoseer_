@@ -64,6 +64,37 @@ export function usePlaceBetOnChain() {
   return { placeBet, stage, error, reset, isContractReady: !!CONTRACT_ADDRESS };
 }
 
+// ─── Claim winnings / refund ─────────────────────────────────────────────────
+
+export function useClaim() {
+  const [claimingId, setClaimingId] = useState(null);
+  const [error, setError] = useState(null);
+  const { writeContractAsync } = useWriteContract();
+
+  // type: 'winnings' (resolved + won) | 'refund' (cancelled market)
+  const claim = async (onChainId, type = 'winnings') => {
+    setError(null);
+    setClaimingId(onChainId);
+    try {
+      const functionName = type === 'refund' ? 'claimRefund' : 'claimWinnings';
+      const tx = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName,
+        args: [BigInt(onChainId)],
+      });
+      return tx;
+    } catch (err) {
+      setError(err.shortMessage ?? err.message);
+      throw err;
+    } finally {
+      setClaimingId(null);
+    }
+  };
+
+  return { claim, claimingId, error };
+}
+
 // ─── Read live on-chain odds ─────────────────────────────────────────────────
 
 export function useOnChainOdds(backendMarketId) {

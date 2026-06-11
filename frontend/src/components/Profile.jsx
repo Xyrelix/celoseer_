@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Icon from './Icon';
 import { useAuth } from '../hooks/useAuth';
+import { useClaim } from '../hooks/useContract';
 
 const TREND = [
   { week: 'W1', v: 45 }, { week: 'W2', v: 52 }, { week: 'W3', v: 48 },
@@ -19,10 +20,20 @@ function deriveDisplayName(privyUser) {
   );
 }
 
-export default function Profile({ user, walletAddress, displayAddress, balance, celo, positions, onBack }) {
+export default function Profile({ user, walletAddress, displayAddress, balance, celo, positions, onBack, onRefresh }) {
   const { logout } = useAuth();
+  const { claim, claimingId, error: claimError } = useClaim();
   const [tab, setTab] = useState('active');
   const [copied, setCopied] = useState(false);
+
+  const handleClaim = async (pos) => {
+    try {
+      await claim(pos.onChainId, pos.claimType);
+      onRefresh?.();           // refresh on-chain positions + balance
+    } catch {
+      // surfaced via claimError
+    }
+  };
 
   const copyAddress = async () => {
     if (!walletAddress) return;
@@ -196,30 +207,68 @@ export default function Profile({ user, walletAddress, displayAddress, balance, 
         )}
 
         {tab === 'closed' && (
-          closed.length > 0 ? closed.map(pos => (
+          closed.length > 0 ? closed.map(pos => {
+            const isRefund = pos.result === 'refund';
+            const won = pos.result === 'won';
+            const badgeLabel = isRefund ? ' CANCELLED' : won ? ' WON' : ' LOST';
+            const badgeIcon = won ? 'check' : isRefund ? 'warning' : 'close';
+            return (
             <div key={pos.id} className={`position-card closed-position ${pos.result} glass-market`}>
               <div className="position-header">
                 <h4>{pos.marketTitle}</h4>
                 <span className={`result-badge ${pos.result}`}>
-                  <Icon name={pos.result === 'won' ? 'check' : 'close'} size={12} />
-                  {pos.result === 'won' ? ' WON' : ' LOST'}
+                  <Icon name={badgeIcon} size={12} />
+                  {badgeLabel}
                 </span>
               </div>
               <div className="position-details">
                 <div className="detail"><span className="label">Wagered</span><span className="value">{pos.amount?.toFixed(2)} cUSD</span></div>
-                <div className="detail"><span className="label">Result</span><span className={`value ${pos.result}`}>{pos.result === 'won' ? '+' : '-'}{Math.abs(pos.potentialProfit)} cUSD</span></div>
+                <div className="detail"><span className="label">Result</span>
+                  <span className={`value ${pos.result}`}>
+                    {isRefund ? `${pos.amount?.toFixed(2)} refundable`
+                      : `${won ? '+' : '-'}${Math.abs(pos.potentialProfit)} cUSD`}
+                  </span>
+                </div>
               </div>
+
+              {pos.claimable && (
+                <button
+                  className="btn-primary ob-btn-glow"
+                  style={{ width: '100%', marginTop: 10 }}
+                  onClick={() => handleClaim(pos)}
+                  disabled={claimingId === pos.onChainId}
+                >
+                  {claimingId === pos.onChainId
+                    ? <span className="ob-loading-row"><span className="ob-spin" />Claiming…</span>
+                    : isRefund ? `Claim refund (${pos.amount?.toFixed(2)} cUSD)`
+                    : `Claim winnings (${pos.potentialPayout} cUSD)`}
+                </button>
+              )}
+              {pos.claimed && (
+                <div className="position-time" style={{ color: '#10b981', marginTop: 8 }}>
+                  <Icon name="check" size={12} color="#10b981" />
+                  <span>Claimed</span>
+                </div>
+              )}
+
               <div className="position-time">
                 <Icon name="calendar" size={12} color="#6b7280" />
                 <span>{pos.timestamp}</span>
               </div>
             </div>
-          )) : (
+            );
+          }) : (
             <div className="empty-state">
               <Icon name="standings" size={38} color="#374151" />
               <p>No closed positions yet.</p>
             </div>
           )
+        )}
+        {claimError && tab === 'closed' && (
+          <div className="glass-market" style={{ padding: '10px 16px', marginTop: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
+            <Icon name="warning" size={15} color="#ef4444" />
+            <span style={{ fontSize: '0.78rem', color: '#ef4444' }}>{claimError}</span>
+          </div>
         )}
       </div>
 
