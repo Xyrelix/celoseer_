@@ -245,7 +245,7 @@ function HighlightCard({ hl, isActive, onActivate, onPause }) {
 /* ─────────────────────────────────────────────────────────────────────────────
    HomeTab
    ───────────────────────────────────────────────────────────────────────────── */
-export default function HomeTab({ onSelectMarket, onFixtureSelect }) {
+export default function HomeTab({ onSelectMarket }) {
   const [slideIdx,   setSlideIdx]   = useState(0);
   const [activeIdx,  setActiveIdx]  = useState(null); // which highlight is playing
   const timerRef = useRef(null);
@@ -364,11 +364,8 @@ export default function HomeTab({ onSelectMarket, onFixtureSelect }) {
           {FIXTURES.map((f, i) => (
             <div
               key={i}
-              className="fixture-row fixture-row--clickable glass-market"
+              className="fixture-row glass-market"
               style={{ animationDelay: `${i * 0.06}s` }}
-              onMouseMove={tilt}
-              onMouseLeave={untilt}
-              onClick={() => onFixtureSelect?.(f)}
             >
               <div className="fix-date">
                 <span className="fix-day">{f.date}</span>
