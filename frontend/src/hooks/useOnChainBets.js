@@ -22,7 +22,7 @@ export function useOnChainBets(address) {
       ]))
     : [];
 
-  const { data, isLoading, refetch } = useReadContracts({
+  const { data, isLoading, isError, error, refetch } = useReadContracts({
     contracts,
     query: {
       enabled: contracts.length > 0,
@@ -31,12 +31,24 @@ export function useOnChainBets(address) {
     },
   });
 
+  if (isError && error) {
+    console.warn('[useOnChainBets] read failed:', error.message || error);
+  }
+
   const positions = [];
-  if (data) {
+  if (data && data.length > 0) {
     entries.forEach(([frontendId, onChainId], idx) => {
       const betRes = data[idx * 2];
       const mktRes = data[idx * 2 + 1];
-      if (betRes?.status !== 'success' || !betRes.result) return;
+      if (!betRes) {
+        console.warn(`[useOnChainBets] no result for market ${onChainId}`);
+        return;
+      }
+      if (betRes?.status !== 'success') {
+        console.warn(`[useOnChainBets] market ${onChainId} getBet error:`, betRes?.error);
+        return;
+      }
+      if (!betRes.result) return;
 
       // getBet → (amount, outcome, claimed)
       const [amountWei, outcomeRaw, claimed] = betRes.result;
