@@ -62,9 +62,12 @@ export async function getMatchResult(homeTeam, awayTeam, matchDate) {
       return null;
     }
 
-    // Get all World Cup 2026 matches
+    // Get all World Cup 2026 matches (unfold goals to see scores)
     const res = await fetch(`${BASE_URL}/competitions/${wcId}/matches`, {
-      headers: { 'X-Auth-Token': API_KEY },
+      headers: {
+        'X-Auth-Token': API_KEY,
+        'X-Unfold-Goals': 'true',
+      },
     });
 
     if (!res.ok) {
