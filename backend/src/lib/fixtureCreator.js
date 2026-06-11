@@ -27,11 +27,14 @@ export async function createFixtures() {
   log.info(`[fixtureCreator] creating ${FIXTURES.length} fixture markets (from #${currentCount})`);
 
   let created = 0;
-  for (const fixture of FIXTURES) {
+  for (let i = 0; i < FIXTURES.length; i++) {
+    const fixture = FIXTURES[i];
     try {
       const question = fixtureToMarketTitle(fixture);
       const closeTime = Math.floor(new Date(fixture.date).getTime() / 1000);
       const hasDraw = fixture.stage === 'group'; // only group matches can draw
+
+      log.info(`[fixtureCreator] creating market ${i + 1}/${FIXTURES.length}: ${question.slice(0, 50)}...`);
 
       const txHash = await walletClient.writeContract({
         address: CONTRACT_ADDRESS,
@@ -40,15 +43,21 @@ export async function createFixtures() {
         args: [question, BigInt(closeTime), hasDraw],
       });
 
-      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      // Wait for confirmation with extended timeout (testnet can be slow)
+      await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+        timeout: 90_000, // 90 seconds max per market
+        pollingInterval: 2_000, // poll every 2 seconds
+      });
       created++;
 
-      if (created % 10 === 0) {
-        log.info(`[fixtureCreator] ${created}/${FIXTURES.length} created...`);
+      // Brief pause between transactions to avoid overwhelming RPC
+      if (i < FIXTURES.length - 1) {
+        await new Promise(r => setTimeout(r, 500));
       }
     } catch (err) {
-      log.error(`[fixtureCreator] failed to create fixture: ${err.shortMessage || err.message}`);
-      // Continue trying the rest
+      log.warn(`[fixtureCreator] market ${i + 1} failed (continuing): ${err.shortMessage || err.message}`);
+      // Continue trying the rest — don't fail the whole creator
     }
   }
 
