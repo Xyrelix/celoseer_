@@ -7,6 +7,7 @@ const CONTRACT = process.env.CONTRACT_ADDRESS || '0xFC653BA52d3d4919FC7806A621ef
 const KEY = process.env.FAUCET_PRIVATE_KEY; // contract owner — same wallet that owns MockCUSD
 
 export const MARKET_ABI = parseAbi([
+  'function createMarket(string question, uint256 closeTime, bool hasDraw) returns (uint256)',
   'function marketCount() view returns (uint256)',
   'function getMarket(uint256 id) view returns (string question, uint256 closeTime, uint8 status, uint8 result, bool hasDraw, uint256 yesPool, uint256 noPool, uint256 drawPool, uint256 totalPool)',
   'function resolveMarket(uint256 id, uint8 result)',
