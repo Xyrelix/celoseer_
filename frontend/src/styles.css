@@ -5582,7 +5582,6 @@ button:active::after {
 }
 
 /* ============================================
-<<<<<<< HEAD
    PLACE WAGER PAGE
    ============================================ */
 
@@ -5945,7 +5944,9 @@ button:active::after {
 
 .fixture-row--clickable:hover .fixture-wager-cta {
   opacity: 1;
-=======
+}
+
+/* ============================================
    PROFILE → POSITIONS LINK
    ============================================ */
 .prof-positions-link {
@@ -5997,5 +5998,4 @@ button:active::after {
   .app-container,
   .top-bar { max-width: 1240px; }
   .markets-container { grid-template-columns: repeat(3, 1fr); }
->>>>>>> 4f9e7dc31679eedb7ace9d5d37214adaf29c8454
 }
