@@ -1,5 +1,6 @@
 import { resolveAllDue } from './resolver.js';
 import { indexEvents } from './indexer.js';
+import { createFixtures } from './fixtureCreator.js';
 import { isResolverConfigured } from './market.js';
 import { log } from './logger.js';
 
@@ -16,6 +17,21 @@ export function startIndexer() {
   };
   setTimeout(tick, 5_000);            // initial catch-up shortly after boot
   setInterval(tick, mins * 60_000);
+}
+
+// Fixture creator — runs once on boot to create all World Cup 2026 match markets.
+// Idempotent; only creates if needed. Requires owner signer (FAUCET_PRIVATE_KEY).
+export function startFixtureCreator() {
+  if (!isResolverConfigured()) {
+    log.warn('fixture creator not configured (need FAUCET_PRIVATE_KEY)');
+    return;
+  }
+  // Run after a brief delay to let the chain settle
+  setTimeout(() => {
+    createFixtures().catch(err => {
+      log.error('fixture creator failed:', err.shortMessage ?? err.message);
+    });
+  }, 8_000);
 }
 
 // Autonomous settlement loop. Every RESOLVER_INTERVAL_MIN minutes it resolves
