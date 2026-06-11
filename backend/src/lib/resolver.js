@@ -1,19 +1,43 @@
-import { createHash } from 'node:crypto';
+import { getMatchResult, getFallbackResult } from './sportsApi.js';
 import { log } from './logger.js';
 import {
   publicClient, walletClient, isResolverConfigured,
   CONTRACT_ADDRESS, MARKET_ABI, STATUS, OUTCOME,
 } from './market.js';
 
-// Free, deterministic settlement — no AI/API cost. The outcome is a stable
-// pseudo-random pick seeded by the market (reproducible, never re-rolls).
-// Slight YES lean; small draw chance for matches that allow it. Swap this for
-// a real sports-data feed when you want true results.
-function decideOutcome(id, question, hasDraw) {
-  const seed = createHash('sha256').update(`${id}:${question}`).digest();
-  const r = seed[0] % 100;
-  if (hasDraw && r < 18) return 'draw';
-  return r < 58 ? 'yes' : 'no';
+// Resolve markets using real World Cup 2026 results from sports API (RapidAPI).
+// Falls back to deterministic hash if API unavailable.
+async function decideOutcome(id, question, hasDraw) {
+  // Extract team names from question (e.g., "Argentina vs France (GROUP)" → Argentina, France)
+  const match = question.match(/^(.+?)\s+vs\s+(.+?)\s*\(/);
+  if (!match) {
+    // Fallback if can't parse question
+    return getFallbackResult(id, question);
+  }
+
+  const [, homeTeam, awayTeam] = match;
+
+  // Try real sports API first
+  const result = await getMatchResult(homeTeam.trim(), awayTeam.trim(), new Date().toISOString().split('T')[0]);
+
+  if (result && result.result) {
+    // Convert API result (home/away/draw) to market outcome (yes/no/draw)
+    // Assumption: "yes" = home team wins, "no" = away team wins, "draw" = draw
+    // (This depends on how your market questions are phrased)
+    if (result.result === 'draw' && hasDraw) return 'draw';
+    if (result.result === 'home') return 'yes';
+    if (result.result === 'away') return 'no';
+  }
+
+  if (result && result.status !== 'finished') {
+    // Match not yet played
+    return null;
+  }
+
+  // API failed or match data unavailable → fall back to deterministic
+  log.warn(`[resolver] using fallback for market ${id}: ${question}`);
+  const fallback = getFallbackResult(id, question);
+  return fallback;
 }
 
 async function readMarket(id) {
@@ -23,7 +47,7 @@ async function readMarket(id) {
   return { question: r[0], closeTime: Number(r[1]), status: Number(r[2]), result: Number(r[3]), hasDraw: r[4] };
 }
 
-/** Resolve a single market on-chain (free deterministic outcome). */
+/** Resolve a single market on-chain (real results from sports API). */
 export async function resolveOne(id, { force = false } = {}) {
   if (!isResolverConfigured()) throw new Error('Resolver not configured (FAUCET_PRIVATE_KEY / CONTRACT_ADDRESS)');
 
@@ -31,7 +55,8 @@ export async function resolveOne(id, { force = false } = {}) {
   if (m.status !== STATUS.OPEN) return { id, skipped: true, reason: `not open (status ${m.status})` };
   if (!force && m.closeTime * 1000 > Date.now()) return { id, skipped: true, reason: 'not yet closed' };
 
-  const outcome = decideOutcome(id, m.question, m.hasDraw);
+  const outcome = await decideOutcome(id, m.question, m.hasDraw);
+  if (!outcome) return { id, skipped: true, reason: 'match not yet finished' };
 
   const txHash = await walletClient.writeContract({
     address: CONTRACT_ADDRESS, abi: MARKET_ABI, functionName: 'resolveMarket',
